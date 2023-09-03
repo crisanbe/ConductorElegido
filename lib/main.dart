@@ -1,4 +1,4 @@
-import 'package:conductor_elegido/architecture/presentation/controllers/register_controller.dart';
+import 'package:conductor_elegido/architecture/presentation/controllers/login_controller.dart';
 import 'package:conductor_elegido/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,7 +17,9 @@ Future<void> main() async {
   runApp(GetMaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: initialRoute,
-    theme: ThemeData(),
+    theme: ThemeData(
+
+    ),
     defaultTransition: Transition.native,
     initialBinding: SplashBinding(),
     getPages: AppPages.pages,
@@ -40,11 +42,11 @@ Future<String> _getInitialRoute(RegisterController registerController) async {
       if (status == "Activo") {
         return Routes.HOME;
       } else if (status == "En proceso") {
-        return Routes.REGISTER1;
+        return Routes.REGISTER;
       }
     }
   }
 
-  return Routes.REGISTER; // Default route para otros casos
+  return Routes.LOGIN; // Default route para otros casos
 }
 

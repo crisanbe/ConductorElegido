@@ -16,10 +16,10 @@ class HomePage extends GetView<HomeController> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             _.signOut();
-            Get.to(() => RegisterPage());
+            Get.to(() => const LoginPage());
             Obx(() {
               if (_.isSigningOut.value) {
-                return CircularProgressIndicator(); // Muestra un CircularProgressIndicator durante el cierre de sesión
+                return const CircularProgressIndicator(); // Muestra un CircularProgressIndicator durante el cierre de sesión
               } else {
                 return const Text("Cerrar Sesión");
               }

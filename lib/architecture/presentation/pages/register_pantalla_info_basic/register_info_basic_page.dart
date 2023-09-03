@@ -1,4 +1,8 @@
-import 'package:conductor_elegido/architecture/presentation/controllers/register_info_basic_controller.dart';
+import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
+import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepOneContent.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepTwoContent.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/ReusableDropdownFormField.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/customtextformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,231 +13,135 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light, // Cambiar los iconos a blanco
-      systemNavigationBarColor: const Color(0x410E0D0D),
-      systemNavigationBarIconBrightness: Brightness.light,
-    ));
-    return Scaffold(
-        backgroundColor: const Color(0x410E0D0D),
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                color: const Color(0x411C1D25),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Container(
-                  margin: const EdgeInsets.all(12),
-                  child: Form(
+    return GetBuilder<RegisterInfoBasicController>(builder: (_)
+    {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: const Color(0x410E0D0D),
+        systemNavigationBarIconBrightness: Brightness.light,
+      ));
 
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-
-                        Container(
-                          width: 250, // Set the desired width for the logo
-                          height: 250,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/register.png'),
-                            ),
-                          ),
-                        ),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 40), // Ajusta según sea necesario
-                            child: Text(
-                              "Trabaja con nostros",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 40), // Ajusta según sea necesario
-                            child: Text(
-                              "Información básica",
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 15,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Obx(() {
-                          return SizedBox(
-                            width: 300,
-                            child: DropdownButtonFormField<String>(
-                              decoration: const InputDecoration(
-                                labelText: 'Tipo de documento',
-                                labelStyle: TextStyle(color: Colors.white),
-                                prefixIcon: Icon(Icons.document_scanner, color: Colors.white),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.amberAccent),
-                                ),
-                              ),
-                              items: controller.options.map((String tipo) {
-                                return DropdownMenuItem<String>(
-                                  value: tipo,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                     shape: BoxShape.rectangle,
-                                      color: Colors.white,
-                                      borderRadius: BorderRadiusDirectional.horizontal()
-                                    ),
-                                    child: Text(
-                                      tipo,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        backgroundColor: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        decorationStyle: TextDecorationStyle.dotted,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValueSelected) {
-                                controller.onRoleChanged(newValueSelected!);
-                              },
-                              value: controller.currentItemSelected.value,
-                              dropdownColor: Colors.white,
-                            ),
-                          );}),
-                        const SizedBox(height: 20),
-                           customTextFormField(
-                              controller:  TextEditingController(text: ''),
-                              hintText: 'Documento',
-                              prefixIcon: Icons.document_scanner,
-                              validator: (value) {
-                                RegExp regex = RegExp(r'^.{6,}$');
-                                if (value!.isEmpty) {
-                                  return "La clave no puede estar vacía";
-                                }
-                                if (!regex.hasMatch(value)) {
-                                  return ("introduzca una contraseña válida de 6 caracteres como mínimo");
-                                } else {
-                                  return null;
-                                }
-                              },
-                              keyboardType: TextInputType.number,
-                              onChanged: (value) {}),
-
-                        const SizedBox(height: 20),
-                        customTextFormField(
-                            controller:  TextEditingController(text: ''),
-                            hintText: 'Nombre completo/razon social',
-                            prefixIcon: Icons.account_circle_outlined,
-                            validator: (value) {
-                              RegExp regex = RegExp(r'^.{6,}$');
-                              if (value!.isEmpty) {
-                                return "La clave no puede estar vacía";
-                              }
-                              if (!regex.hasMatch(value)) {
-                                return ("introduzca una contraseña válida de 6 caracteres como mínimo");
-                              } else {
-                                return null;
-                              }
-                            },
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {}),
-
-                        const SizedBox(height: 20),
-                        customTextFormField(
-                            controller:  TextEditingController(text: ''),
-                            hintText: 'Contacto',
-                            prefixIcon: Icons.contact_mail,
-                            validator: (value) {
-                              RegExp regex = RegExp(r'^.{6,}$');
-                              if (value!.isEmpty) {
-                                return "La clave no puede estar vacía";
-                              }
-                              if (!regex.hasMatch(value)) {
-                                return ("introduzca una contraseña válida de 6 caracteres como mínimo");
-                              } else {
-                                return null;
-                              }
-                            },
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {}),
-
-                        const SizedBox(height: 20),
-                        customTextFormField(
-                            controller:  TextEditingController(text: ''),
-                            hintText: 'Correo eletronico',
-                            prefixIcon: Icons.email,
-                            validator: (value) {
-                              RegExp regex = RegExp(r'^.{6,}$');
-                              if (value!.isEmpty) {
-                                return "La clave no puede estar vacía";
-                              }
-                              if (!regex.hasMatch(value)) {
-                                return ("introduzca una contraseña válida de 6 caracteres como mínimo");
-                              } else {
-                                return null;
-                              }
-                            },
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {}),
-
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 300, // Ancho deseado para el botón
-                              child: MaterialButton(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(10.0)),
-                                  side: BorderSide(
-                                      color: Colors.white), // Borde blanco
-                                ),
-                                elevation: 5.0,
-                                height: 40,
-                                onPressed: () {
-
-                                },
-                                color: Colors.black,
-                                // Fondo oscuro
-                                child: const Text(
-                                  "Continuar",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.white, // Texto blanco
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+      List<Step> stepList() =>
+          [
+            Step(
+              state: controller.activeStepIndex.value <= 0 ? StepState.editing : StepState.complete,
+              isActive: controller.activeStepIndex.value >= 0,
+              title: const Text(''),
+              content: const BuildStepOneContent()
+            ),
+            Step(
+                state: controller.activeStepIndex.value <= 1 ? StepState.editing : StepState.complete,
+                isActive: controller.activeStepIndex.value >= 1,
+                title: const Text(''),
+                content: const BuildStepTwoContent()
                 ),
+            Step(
+              state: StepState.complete,
+              isActive: controller.activeStepIndex.value >= 2,
+              title: const Text(''),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('typeDocument: ${_.currentItemSelected.value}',style: const TextStyle(color: Colors.white),),
+                  Text('document: ${_.document.text}', style: const TextStyle(color: Colors.white),),
+                  Text('fullName: ${_.fullName.text}', style: const TextStyle(color: Colors.white),),
+                  Text('contacto: ${_.contacto.text}', style: const TextStyle(color: Colors.white),),
+                  Text('email: ${_.email.text}', style: const TextStyle(color: Colors.white),),
+                  Text('Password: ${_.passwordController.text}', style: const TextStyle(color: Colors.white)),
+                  Text('status : ${_.userStatus.value}', style: const TextStyle(color: Colors.white),),
+                  Text('fechaNacimiento : ${_.dateBirthController.text}', style: const TextStyle(color: Colors.white),),
+                  Text('fechaExpiracion : ${_.dateExpirationLicense.text}', style: const TextStyle(color: Colors.white),),
+                  Text('fechaVencimiento : ${_.licensCurrentlyExpired.text}', style: const TextStyle(color: Colors.white),),
+                  Text('zoneCoverage : ${_.zoneCoverage.text}', style: const TextStyle(color: Colors.white),),
+                  Text('address : ${_.address.text}', style: const TextStyle(color: Colors.white),),
+                ],
               ),
-            ],
-          ),
+            )
+          ];
+
+      return Container(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Obx(() {
+            return Theme(
+            data: ThemeData(canvasColor: Colors.black),
+              child: Stepper(
+                /*connectorColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.disabled)) {
+                    return Colors.grey;
+                  }
+                  return Colors.amber;
+                }),*/
+            type: StepperType.horizontal,
+            currentStep: controller.activeStepIndex.value,
+            steps: stepList(),
+            onStepContinue: () {
+              controller.onNextStep(stepList());
+            },
+            onStepCancel: () {
+              controller.onPreviousStep();
+            },
+            onStepTapped: (int index) {
+              controller.activeStepIndex.value = index;
+            },
+            controlsBuilder: (BuildContext context, ControlsDetails controlsDetails) {
+              final isLastStep = controller.activeStepIndex.value == stepList().length - 1;
+              return Container(
+                color: Colors.black,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                         if (isLastStep) {
+                            _.signUp();
+                           Get.offNamed(Routes.LOGIN);
+                         } else {
+                            controlsDetails.onStepContinue!();
+                         }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: const BorderSide(color: Colors.white),
+                          ),
+                        ),
+                        child: (isLastStep) ? const Text('Enviar',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ) : const Text('Continuar',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    if (controller.activeStepIndex.value > 0)
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: controlsDetails.onStepCancel,
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.black, // Cambia el color de fondo del botón
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0), // Configura el radio de borde
+                              side: const BorderSide(color: Colors.white), // Configura el borde blanco
+                            ),
+                          ),
+                          child: const Text('Regresar', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      )
+                  ],
+                ),
+              );
+            },
+              ),
+            );
+          }),
         ),
       );
+    });
   }
 }

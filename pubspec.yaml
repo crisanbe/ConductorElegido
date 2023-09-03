@@ -30,6 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  get: ^4.6.5
+  firebase: ^9.0.3
+  firebase_auth: ^4.9.0
+  firebase_core: ^2.15.1
+  cloud_firestore: ^4.9.1
+  flutter_keyboard_visibility: ^5.4.1
+  table_calendar: ^3.0.9
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -39,11 +46,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  get: ^4.6.5
-  firebase: ^9.0.3
-  firebase_auth: ^4.9.0
-  firebase_core: ^2.15.1
-  cloud_firestore: ^4.9.1
+
   flutter_lints: ^2.0.3
 
 # For information on the generic Dart part of this file, see the
