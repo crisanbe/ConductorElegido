@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 application
-INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:2:5-33:19
+INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:2:5-36:19
 MERGED from [:firebase_auth] /Users/macbook/StudioProjects/conductor_elegido/build/firebase_auth/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-15:19
 MERGED from [:firebase_auth] /Users/macbook/StudioProjects/conductor_elegido/build/firebase_auth/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-15:19
 MERGED from [:cloud_firestore] /Users/macbook/StudioProjects/conductor_elegido/build/cloud_firestore/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-15:19
@@ -36,15 +36,16 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] /Users/macb
 	android:name
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml
 manifest
-ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
-INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
-INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
-INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
-MERGED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
+ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
+INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
+INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
+INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
+MERGED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
 MERGED from [:firebase_auth] /Users/macbook/StudioProjects/conductor_elegido/build/firebase_auth/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-17:12
 MERGED from [:cloud_firestore] /Users/macbook/StudioProjects/conductor_elegido/build/cloud_firestore/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-17:12
 MERGED from [:firebase_core] /Users/macbook/StudioProjects/conductor_elegido/build/firebase_core/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-17:12
 MERGED from [:flutter_keyboard_visibility] /Users/macbook/StudioProjects/conductor_elegido/build/flutter_keyboard_visibility/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:flutter_native_splash] /Users/macbook/StudioProjects/conductor_elegido/build/flutter_native_splash/intermediates/merged_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [com.google.firebase:firebase-auth:22.1.0] /Users/macbook/.gradle/caches/transforms-3/ed3a4dbe3a76043a2c4d2c3415a47227/transformed/jetified-firebase-auth-22.1.0/AndroidManifest.xml:17:1-75:12
 MERGED from [com.google.android.recaptcha:recaptcha:18.1.2] /Users/macbook/.gradle/caches/transforms-3/1198434ed0ee150136ee8c308e560f63/transformed/jetified-recaptcha-18.1.2/AndroidManifest.xml:2:1-10:12
 MERGED from [androidx.window:window-java:1.0.0-beta04] /Users/macbook/.gradle/caches/transforms-3/e19413d15b4da89d57acf85c2ff3f9b2/transformed/jetified-window-java-1.0.0-beta04/AndroidManifest.xml:17:1-23:12
@@ -86,15 +87,15 @@ INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/de
 INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/debug/AndroidManifest.xml:1:1-7:12
 	package
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml
-		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
+		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/debug/AndroidManifest.xml
 	android:versionName
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml
-		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
+		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/debug/AndroidManifest.xml
 	android:versionCode
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml
-		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-34:12
+		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:1-37:12
 		INJECTED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/debug/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/macbook/StudioProjects/conductor_elegido/android/app/src/main/AndroidManifest.xml:1:11-69
@@ -110,6 +111,8 @@ MERGED from [:firebase_core] /Users/macbook/StudioProjects/conductor_elegido/bui
 MERGED from [:firebase_core] /Users/macbook/StudioProjects/conductor_elegido/build/firebase_core/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:flutter_keyboard_visibility] /Users/macbook/StudioProjects/conductor_elegido/build/flutter_keyboard_visibility/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:flutter_keyboard_visibility] /Users/macbook/StudioProjects/conductor_elegido/build/flutter_keyboard_visibility/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:flutter_native_splash] /Users/macbook/StudioProjects/conductor_elegido/build/flutter_native_splash/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:flutter_native_splash] /Users/macbook/StudioProjects/conductor_elegido/build/flutter_native_splash/intermediates/merged_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [com.google.firebase:firebase-auth:22.1.0] /Users/macbook/.gradle/caches/transforms-3/ed3a4dbe3a76043a2c4d2c3415a47227/transformed/jetified-firebase-auth-22.1.0/AndroidManifest.xml:21:5-23:64
 MERGED from [com.google.firebase:firebase-auth:22.1.0] /Users/macbook/.gradle/caches/transforms-3/ed3a4dbe3a76043a2c4d2c3415a47227/transformed/jetified-firebase-auth-22.1.0/AndroidManifest.xml:21:5-23:64
 MERGED from [com.google.android.recaptcha:recaptcha:18.1.2] /Users/macbook/.gradle/caches/transforms-3/1198434ed0ee150136ee8c308e560f63/transformed/jetified-recaptcha-18.1.2/AndroidManifest.xml:5:5-44

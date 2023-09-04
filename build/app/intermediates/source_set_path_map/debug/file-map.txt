@@ -17,5 +17,5 @@ com.conductor.conductor_elegido.app-merged_res-15 /Users/macbook/StudioProjects/
 com.conductor.conductor_elegido.app-packaged_res-16 /Users/macbook/StudioProjects/conductor_elegido/build/cloud_firestore/intermediates/packaged_res/debug
 com.conductor.conductor_elegido.app-packaged_res-17 /Users/macbook/StudioProjects/conductor_elegido/build/firebase_auth/intermediates/packaged_res/debug
 com.conductor.conductor_elegido.app-packaged_res-18 /Users/macbook/StudioProjects/conductor_elegido/build/firebase_core/intermediates/packaged_res/debug
-com.conductor.conductor_elegido.app-packaged_res-19 /Users/macbook/StudioProjects/conductor_elegido/build/path_provider_android/intermediates/packaged_res/debug
-com.conductor.conductor_elegido.app-packaged_res-20 /Users/macbook/StudioProjects/conductor_elegido/build/shared_preferences_android/intermediates/packaged_res/debug
+com.conductor.conductor_elegido.app-packaged_res-19 /Users/macbook/StudioProjects/conductor_elegido/build/flutter_keyboard_visibility/intermediates/packaged_res/debug
+com.conductor.conductor_elegido.app-packaged_res-20 /Users/macbook/StudioProjects/conductor_elegido/build/flutter_native_splash/intermediates/packaged_res/debug

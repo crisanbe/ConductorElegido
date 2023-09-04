@@ -44,7 +44,7 @@ class LoginPage extends GetView<RegisterController> {
                           height: 100,
                           decoration: const BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage('assets/images/logo_conductor.png'),
+                              image: AssetImage('assets/images/splash.png'),
                             ),
                           ),
                         ),
