@@ -1,3 +1,5 @@
+import 'package:conductor_elegido/architecture/presentation/controllers/gps_controller/Android/locationController.dart';
+import 'package:conductor_elegido/architecture/presentation/controllers/gps_controller/ios/geolocator_Controller.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/login_controller.dart';
 import 'package:conductor_elegido/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,17 +13,18 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  final LocationController locationController = Get.put(LocationController());
+  final GeolocatorController geolocatorController = Get.put(GeolocatorController());
   final RegisterController registerController = Get.put(RegisterController());
   final initialRoute = await _getInitialRoute(registerController);
 
+  geolocatorController.checkPermissionAndGetLocation();
+  locationController.checkLocationPermission();
   runApp(GetMaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: initialRoute,
-    theme: ThemeData(
-
-    ),
+    theme: ThemeData(),
     defaultTransition: Transition.native,
-    initialBinding: SplashBinding(),
     getPages: AppPages.pages,
   ));
 }

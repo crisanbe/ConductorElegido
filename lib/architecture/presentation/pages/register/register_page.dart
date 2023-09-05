@@ -1,10 +1,11 @@
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
+import 'package:conductor_elegido/architecture/presentation/controllers/gps_controller/Android/locationController.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/login_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/customtextformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart'; // Importa el paquete Keyboard Visibility
 import 'package:get/get.dart';
+import 'package:location/location.dart';
 
 class LoginPage extends GetView<RegisterController> {
   const LoginPage({super.key});
@@ -12,8 +13,7 @@ class LoginPage extends GetView<RegisterController> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<RegisterController>(builder: (_) {
-      final KeyboardVisibilityController _keyboardVisibilityController = KeyboardVisibilityController(); // Crea el controlador de visibilidad del teclado
-
+      final LocationController locationController = Get.put(LocationController());
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
@@ -25,6 +25,24 @@ class LoginPage extends GetView<RegisterController> {
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
+             /* Obx(() {
+                if (locationController.serviceEnabled.value) {
+                  if (locationController.permissionGranted.value ==
+                      PermissionStatus.granted) {
+                    return ElevatedButton(
+                      onPressed: () async {
+                        await locationController.getCurrentLocation();
+                        // Accede a la ubicación actual desde locationController.locationData
+                      },
+                      child: Text('Obtener Ubicación'),
+                    );
+                  } else {
+                    return Text('Permiso de ubicación denegado');
+                  }
+                } else {
+                  return Text('Servicio de ubicación deshabilitado');
+                }
+              }),*/
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 30),
 
@@ -35,6 +53,7 @@ class LoginPage extends GetView<RegisterController> {
                     key: _.formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
+
                       children: [
                         const SizedBox(
                           height: 80,
