@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conductor_elegido/architecture/data/firebase/auth_firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class UserRepositoryImpl implements UserRepository {
+class AuthenticationRepositoryImpl implements AuthenticationRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
+  @override
   Future<void> signUpUser(
       String typeDocument,
       String document,
@@ -54,6 +55,15 @@ class UserRepositoryImpl implements UserRepository {
       return null; // Los datos del usuario no existen
     } catch (e) {
       return null;
+    }
+  }
+
+  @override
+  Future<void> login(String email, String password) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw e;
     }
   }
 }

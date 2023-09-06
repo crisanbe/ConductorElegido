@@ -1,9 +1,8 @@
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
-import 'package:conductor_elegido/architecture/domain/repositories/user_repository_impl.dart';
+import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,7 +23,7 @@ class RegisterInfoBasicController extends GetxController {
   final TextEditingController address = TextEditingController();
   DateTime selectedDate = DateTime.now(); // Esta variable almacena la fecha seleccionada
 
-  late final UserRepositoryImpl userRepository;
+  late final AuthenticationRepositoryImpl userRepository;
   late final FirebaseAuth auth;
   late final RxBool _showProgress;
   bool get showProgress => _showProgress.value;
@@ -35,7 +34,7 @@ class RegisterInfoBasicController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    userRepository = UserRepositoryImpl();
+    userRepository = AuthenticationRepositoryImpl();
     auth = FirebaseAuth.instance;
     _showProgress = false.obs;
     FirebaseAuth.instance.authStateChanges().listen((User? user) {

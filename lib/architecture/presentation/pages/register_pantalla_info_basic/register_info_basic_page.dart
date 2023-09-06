@@ -2,8 +2,7 @@ import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepOneContent.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepTwoContent.dart';
-import 'package:conductor_elegido/architecture/presentation/widgets/ReusableDropdownFormField.dart';
-import 'package:conductor_elegido/architecture/presentation/widgets/customtextformfield.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -130,7 +129,8 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                               side: const BorderSide(color: Colors.white), // Configura el borde blanco
                             ),
                           ),
-                          child: const Text('Regresar', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const CustomText(text: "Regresar", fontFamily: "bold",
+                          ),
                         ),
                       )
                   ],

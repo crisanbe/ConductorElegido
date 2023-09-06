@@ -1,9 +1,9 @@
 import 'package:conductor_elegido/architecture/data/firebase/auth_firebase.dart';
 
 class SignUpUseCase {
-  final UserRepository userRepository;
+  final AuthenticationRepository authenticationRepository;
 
-  SignUpUseCase(this.userRepository);
+  SignUpUseCase(this.authenticationRepository);
 
   Future<void> execute(
       String typeDocument,
@@ -18,7 +18,7 @@ class SignUpUseCase {
       DateTime licensCurrentlyExpired,
       String ZoneCoverage,
       String Address) async {
-    await userRepository.signUpUser(
+    await authenticationRepository.signUpUser(
         typeDocument,
         document,
         fullName,

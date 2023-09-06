@@ -1,4 +1,4 @@
-abstract class UserRepository {
+abstract class AuthenticationRepository {
   Future<void> signUpUser(
       String typeDocument,
       String document,
@@ -12,5 +12,10 @@ abstract class UserRepository {
       DateTime licensCurrentlyExpired,
       String ZoneCoverage,
       String Address
+      );
+
+  Future<void> login(
+      String email,
+      String password
       );
 }

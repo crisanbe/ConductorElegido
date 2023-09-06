@@ -1,6 +1,6 @@
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
-import 'package:conductor_elegido/architecture/presentation/widgets/ReusableDropdownFormField.dart';
-import 'package:conductor_elegido/architecture/presentation/widgets/customtextformfield.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/moleculas/reusableDropdownFormField.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/moleculas/customtextformfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
