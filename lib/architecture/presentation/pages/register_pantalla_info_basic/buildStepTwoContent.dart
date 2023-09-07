@@ -63,7 +63,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   controller: _.dateBirthController,
                   hintText: 'Fecha de nacimiento',
                   prefixIcon: Icons.date_range_rounded,
-                  onTap: ()=> _.showCalendar(context),
+                  onTap: ()=> _.showCalendarAndUpdateText(context,_.dateBirthController),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Este campo es requerido";
@@ -77,7 +77,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   controller: _.dateExpirationLicense,
                   hintText: 'Fecha de expedicion licencia',
                   prefixIcon: Icons.account_box_rounded,
-                  onTap: ()=> _.showCalendar(context),
+                  onTap: ()=> _.showCalendarAndUpdateText(context,_.dateExpirationLicense),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Este campo es requerido";
@@ -91,7 +91,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   controller: _.licensCurrentlyExpired,
                   hintText: 'Fecha de vencimiento licencia',
                   prefixIcon: Icons.access_time_outlined,
-                  onTap: ()=> _.showCalendar(context),
+                  onTap: ()=> _.showCalendarAndUpdateText(context,_.licensCurrentlyExpired),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Este campo es requerido";
@@ -99,20 +99,24 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   },
                   keyboardType: TextInputType.datetime,
                   onChanged: (value) {}),
-              const SizedBox(height: 17),
-              customTextFormField(
-                  focusNode: zoneCoverageFocus,
-                  controller: _.zoneCoverage,
-                  hintText: 'Zona cobertura',
-                  prefixIcon: Icons.accessibility_sharp,
-                  validator: (value) {
-                    RegExp regex = RegExp(r'^.{6,}$');
-                    if (value!.isEmpty) {
-                      return "Este campo es requerido";
-                    }
+              const SizedBox(height: 15),
+              SizedBox(
+                width: 320,
+                child: ReusableDropdownFormField(
+                  labelText: 'Zona de cobertura',
+                  prefixIcon: Icons.add_box,
+                  options: controller.optionsCoverage,
+                  value: controller.optionsCoverageItemSelected.value,
+                  onChanged: (String? newValueSelected) {
+                    controller.onRoleChanged(newValueSelected!);
                   },
-                  keyboardType: TextInputType.text,
-                  onChanged: (value) {}),
+                  labelColor: Colors.white,
+                  enabledBorderColor: Colors.white,
+                  focusedBorderColor: Colors.white,
+                  errorBorderColor: Colors.amberAccent,
+                  dropdownColor: Colors.white,
+                ),
+              ),
               const SizedBox(height: 17),
               customTextFormField(
                   focusNode: addressFocus,

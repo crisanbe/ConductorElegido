@@ -1,6 +1,7 @@
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepOneContent.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepThreeCamara.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepTwoContent.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +37,14 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                 content: const BuildStepTwoContent()
                 ),
             Step(
+                state: controller.activeStepIndex.value <= 2 ? StepState.editing : StepState.complete,
+                isActive: controller.activeStepIndex.value >= 2,
+                title: const Text(''),
+                content: const BuildStepThreeCamara(),
+            ),
+            Step(
               state: StepState.complete,
-              isActive: controller.activeStepIndex.value >= 2,
+              isActive: controller.activeStepIndex.value >= 3,
               title: const Text(''),
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
@@ -7,6 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RegisterInfoBasicController extends GetxController {
+  final picker = ImagePicker();
+  File? idFrontImageCedula;
+  File? idBackImageCedula;
+  File? licenseFrontImage;
+  File? licenseBackImage;
   final RxInt activeStepIndex = 0.obs;
   final formKey = GlobalKey<FormState>();
   final formKey2 = GlobalKey<FormState>();
@@ -30,6 +39,90 @@ class RegisterInfoBasicController extends GetxController {
 
   List<String> options = ['CC', 'Documento 2'];
   RxString currentItemSelected = "CC".obs;
+
+  List<String> optionsCoverage = ['SURA', 'TU EPS'];
+  RxString optionsCoverageItemSelected = "SURA".obs;
+
+  Future<void> takeIdFrontPhoto() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      idFrontImageCedula = File(pickedFile.path);
+      update();
+    }
+  }
+
+  Future<void> takeIdBackPhoto() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      idBackImageCedula = File(pickedFile.path);
+      update();
+    }
+  }
+
+  Future<void> takeLicenseFrontPhoto() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      licenseFrontImage = File(pickedFile.path);
+      update();
+    }
+  }
+
+  Future<void> takeLicenseBackPhoto() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      licenseBackImage = File(pickedFile.path);
+      update();
+    }
+  }
+
+  Future<void> sendImages() async {
+    try {
+      // Para la licencia de conducir
+      if (idFrontImageCedula != null && idBackImageCedula != null) {
+        await uploadImageToFirebase(idFrontImageCedula!);
+        await uploadImageToFirebase(idBackImageCedula!);
+      } else {
+        Get.snackbar('Error', 'Por favor, toma ambas fotos de la licencia antes de enviar.');
+        return;
+      }
+
+      // Para la tarjeta de identificación
+      if (idFrontImageCedula != null && idBackImageCedula != null) {
+        await uploadImageToFirebase(idFrontImageCedula!);
+        await uploadImageToFirebase(idBackImageCedula!);
+      } else {
+        Get.snackbar('Error', 'Por favor, toma ambas fotos de la tarjeta de identificación antes de enviar.');
+        return;
+      }
+
+      // Para el pasaporte
+      if (licenseFrontImage != null && licenseBackImage != null) {
+        await uploadImageToFirebase(licenseFrontImage!);
+        await uploadImageToFirebase(licenseBackImage!);
+      } else {
+        Get.snackbar('Error', 'Por favor, toma ambas fotos del pasaporte antes de enviar.');
+        return;
+      }
+      Get.snackbar('Éxito', 'Las imágenes se han subido a Firebase Storage.');
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
+    }
+  }
+
+  Future<void> uploadImageToFirebase(File imageFile) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      await firebase_storage.FirebaseStorage.instance
+          .ref('images/$fileName.jpg')
+          .putFile(imageFile);
+    } catch (e) {
+      print('Error al subir la imagen: $e');
+    }
+  }
 
   @override
   void onInit() {
@@ -65,9 +158,13 @@ class RegisterInfoBasicController extends GetxController {
             dateBirth,
             dateExpiration,
             fechaVencimiento,
-            zoneCoverage.text.trim(),
+            optionsCoverageItemSelected.value.trim(),
           address.text.trim()
         );
+
+        // Ahora, el usuario está registrado. Sube las imágenes.
+        await sendImages();
+
         Get.offNamed(Routes.REGISTER);
       } on FirebaseAuthException catch (e) {
         Get.back();
@@ -80,7 +177,10 @@ class RegisterInfoBasicController extends GetxController {
     }
   }
 
-  Future<void> showCalendar(BuildContext context) async {
+  Future<void> showCalendarAndUpdateText(
+      BuildContext context,
+      TextEditingController textController,
+      ) async {
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -89,12 +189,11 @@ class RegisterInfoBasicController extends GetxController {
     );
     if (pickedDate != null) {
       selectedDate = pickedDate;
-      dateBirthController.text = pickedDate.toLocal().toString().split(' ')[0];
-      dateExpirationLicense.text = pickedDate.toLocal().toString().split(' ')[0];
-      licensCurrentlyExpired.text = pickedDate.toLocal().toString().split(' ')[0];
+      textController.text = pickedDate.toLocal().toString().split(' ')[0];
     }
   }
-   onNextStep(List<Step> steps) {
+
+  onNextStep(List<Step> steps) {
     if (activeStepIndex.value < (steps.length - 1)) {
       activeStepIndex.value++;
     } else {
