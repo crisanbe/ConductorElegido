@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,8 +36,7 @@ class RegisterInfoBasicController extends GetxController {
 
   late final AuthenticationRepositoryImpl userRepository;
   late final FirebaseAuth auth;
-  late final RxBool _showProgress;
-  bool get showProgress => _showProgress.value;
+  final RxBool showProgressBar = false.obs;
 
   List<String> options = ['CC', 'Documento 2'];
   RxString currentItemSelected = "CC".obs;
@@ -81,44 +82,73 @@ class RegisterInfoBasicController extends GetxController {
 
   Future<void> sendImages() async {
     try {
-      // Para la licencia de conducir
-      if (idFrontImageCedula != null && idBackImageCedula != null) {
-        await uploadImageToFirebase(idFrontImageCedula!);
-        await uploadImageToFirebase(idBackImageCedula!);
-      } else {
-        Get.snackbar('Error', 'Por favor, toma ambas fotos de la licencia antes de enviar.');
-        return;
-      }
+      // Obtener el usuario actual
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        // Subir la imagen de la cédula frontal
+        if (idFrontImageCedula != null) {
+          await uploadImageToFirebase(idFrontImageCedula!, userId, 'idFront');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/idFront.jpg')
+              .getDownloadURL();
+          // Guardar la URL en Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({'idFrontImageCedulaUrl': downloadUrl});
+        }
 
-      // Para la tarjeta de identificación
-      if (idFrontImageCedula != null && idBackImageCedula != null) {
-        await uploadImageToFirebase(idFrontImageCedula!);
-        await uploadImageToFirebase(idBackImageCedula!);
-      } else {
-        Get.snackbar('Error', 'Por favor, toma ambas fotos de la tarjeta de identificación antes de enviar.');
-        return;
-      }
+        // Subir la imagen de la cédula posterior
+        if (idBackImageCedula != null) {
+          await uploadImageToFirebase(idBackImageCedula!, userId, 'idBack');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/idBack.jpg')
+              .getDownloadURL();
+          // Guardar la URL en Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({'idBackImageCedulaUrl': downloadUrl});
+        }
 
-      // Para el pasaporte
-      if (licenseFrontImage != null && licenseBackImage != null) {
-        await uploadImageToFirebase(licenseFrontImage!);
-        await uploadImageToFirebase(licenseBackImage!);
-      } else {
-        Get.snackbar('Error', 'Por favor, toma ambas fotos del pasaporte antes de enviar.');
-        return;
+        // Subir la imagen de la licencia frontal
+        if (licenseFrontImage != null) {
+          await uploadImageToFirebase(
+              licenseFrontImage!, userId, 'licenseFront');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/licenseFront.jpg')
+              .getDownloadURL();
+          // Guardar la URL en Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({'licenseFrontImageUrl': downloadUrl});
+        }
+
+        // Subir la imagen de la licencia posterior
+        if (licenseBackImage != null) {
+          await uploadImageToFirebase(licenseBackImage!, userId, 'licenseBack');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/licenseBack.jpg')
+              .getDownloadURL();
+          // Guardar la URL en Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({'licenseBackImageUrl': downloadUrl});
+        }
+        Get.snackbar('Éxito', 'Las imágenes se han subido y guardado en Firestore.');
       }
-      Get.snackbar('Éxito', 'Las imágenes se han subido a Firebase Storage.');
     } catch (e) {
       Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
     }
   }
 
-  Future<void> uploadImageToFirebase(File imageFile) async {
+  Future<void> uploadImageToFirebase(File imageFile, String userId, String imageType) async {
     try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      await firebase_storage.FirebaseStorage.instance
-          .ref('images/$fileName.jpg')
-          .putFile(imageFile);
+      String fileName = '$userId/$imageType.jpg';
+      await firebase_storage.FirebaseStorage.instance.ref(fileName).putFile(imageFile);
     } catch (e) {
       print('Error al subir la imagen: $e');
     }
@@ -129,7 +159,7 @@ class RegisterInfoBasicController extends GetxController {
     super.onInit();
     userRepository = AuthenticationRepositoryImpl();
     auth = FirebaseAuth.instance;
-    _showProgress = false.obs;
+    showProgressBar.value;
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
     });
     dateBirthController.text = DateTime.now().toLocal().toString().split(' ')[0];
@@ -140,7 +170,7 @@ class RegisterInfoBasicController extends GetxController {
   }
 
   Future<void> signUp() async {
-    _showProgress.value = true;
+    showProgressBar.value = true;
     if (formKey.currentState!.validate() || formKey2.currentState!.validate()) {
       try {
         final signUpUseCase = SignUpUseCase(userRepository);
@@ -165,15 +195,16 @@ class RegisterInfoBasicController extends GetxController {
         // Ahora, el usuario está registrado. Sube las imágenes.
         await sendImages();
 
-        Get.offNamed(Routes.REGISTER);
+        Get.offNamed(Routes.HOME_VALIDATION);
+        showProgressBar.value = false;
       } on FirebaseAuthException catch (e) {
         Get.back();
         Get.showSnackbar(ErrorSnackbar(e.message ?? e.code));
       } finally {
-        _showProgress.value = false;
+        showProgressBar.value;
       }
     } else {
-      _showProgress.value = false;
+      showProgressBar.value;
     }
   }
 

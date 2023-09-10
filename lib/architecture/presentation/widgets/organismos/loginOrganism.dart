@@ -90,6 +90,7 @@ class LoginOrganism extends StatelessWidget {
                   text: AppStrings.enter,
                   fontSize: 20.0,
                   color: Colors.white,
+                  textAlign: TextAlign.center,
                 ),
                 ),
               ),
@@ -116,6 +117,7 @@ class LoginOrganism extends StatelessWidget {
                   text: AppStrings.workwithus,
                   fontSize: 20.0,
                   color: Colors.white,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -125,11 +127,12 @@ class LoginOrganism extends StatelessWidget {
         const Align(
           alignment: Alignment.centerRight,
           child: Padding(
-            padding: EdgeInsets.only(right: 40),
+            padding: EdgeInsets.only(right: 50),
             child: CustomText(
               text: AppStrings.iforgotMypassword,
               fontSize: 15.0,
               color: Colors.white,
+              textAlign: TextAlign.right,
             ),
           ),
         ),
@@ -142,6 +145,7 @@ class LoginOrganism extends StatelessWidget {
               text: AppStrings.registerToday,
               fontSize: 15.0,
               color: Colors.white,
+              textAlign: TextAlign.center,
             ),
           ),
         )

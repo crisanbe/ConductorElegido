@@ -42,10 +42,10 @@ Future<String> _getInitialRoute(LoginController registerController) async {
     final userData = await registerController.authenticationRepository.getUserData(currentUser.uid);
     if (userData != null) {
       final status = userData['status'];
-      if (status == AppStrings.activeStatus) {
+      if (status == AppStrings.activeDriverStatus) {
         return Routes.HOME;
-      } else if (status == AppStrings.inProgressStatus) {
-        return Routes.REGISTER;
+      } else if (status == AppStrings.driverStatusInRegistrationProgress) {
+        return Routes.HOME_VALIDATION;
       }
     }
   }

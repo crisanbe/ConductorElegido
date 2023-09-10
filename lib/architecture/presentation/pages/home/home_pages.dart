@@ -11,7 +11,7 @@ class HomePage extends GetView<HomeController> {
     return GetBuilder<HomeController>(builder: (_){
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Trabaja con nosotros"),
+          title: const Text("Conductor Activo!"),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {

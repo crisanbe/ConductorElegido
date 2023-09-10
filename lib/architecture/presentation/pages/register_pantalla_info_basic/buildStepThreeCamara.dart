@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
-  const BuildStepThreeCamara({Key? key});
+  const BuildStepThreeCamara({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -191,6 +191,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                                 text: "Licencia de conducion frontal",
                                 fontFamily: "bold",
                                 color: Colors.black,
+                                textAlign: TextAlign.center,
                               ),
                           ],
                         ),
@@ -239,6 +240,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                                 text: "Licencia de conducion posterior",
                                 fontFamily: "bold",
                                 color: Colors.black,
+                                textAlign: TextAlign.center,
                               ),
                           ],
                         ),

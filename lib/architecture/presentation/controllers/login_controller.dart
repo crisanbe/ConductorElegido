@@ -3,6 +3,7 @@ import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/login_usecase.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/home/home_validation_pages.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,8 +16,6 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   late final AuthenticationRepositoryImpl authenticationRepository;
   late final FirebaseAuth auth;
-  final RxString userStatus = "En proceso".obs;
-  String get userStatusValue => userStatus.value;
   final RxString status = "".obs;
   RxBool isObscure = true.obs;
   late final RxBool _showProgress;
@@ -59,6 +58,7 @@ class LoginController extends GetxController {
           emailController.text.trim(),
           passwordController.text,
         );
+        await checkRegistrationStatus();// verificar y actualizar el estado después de iniciar sesión
         Get.back();
         _navigateBasedOnStatus();
       }on FirebaseAuthException catch (e) {
@@ -77,10 +77,10 @@ class LoginController extends GetxController {
   }
 
   void _navigateBasedOnStatus() {
-    if (status.value == AppStrings.activeStatus) {
+    if (status.value == AppStrings.activeDriverStatus) {
       Get.offNamed(Routes.HOME);
-    } else if (status.value == AppStrings.inProgressStatus) {
-      Get.offNamed(Routes.REGISTER);
+    } else if (status.value == AppStrings.driverStatusInRegistrationProgress) {
+      Get.offNamed(Routes.HOME_VALIDATION);
     }
   }
 
