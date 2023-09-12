@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
+import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
@@ -19,6 +19,7 @@ class RegisterInfoBasicController extends GetxController {
   File? licenseFrontImage;
   File? licenseBackImage;
   final RxInt activeStepIndex = 0.obs;
+  RxBool isObscure = true.obs;
   final formKey = GlobalKey<FormState>();
   final formKey2 = GlobalKey<FormState>();
   final TextEditingController fullName = TextEditingController();
@@ -32,7 +33,7 @@ class RegisterInfoBasicController extends GetxController {
   final TextEditingController licensCurrentlyExpired = TextEditingController();
   final TextEditingController zoneCoverage = TextEditingController();
   final TextEditingController address = TextEditingController();
-  DateTime selectedDate = DateTime.now(); // Esta variable almacena la fecha seleccionada
+  DateTime selectedDate = DateTime.now();
 
   late final AuthenticationRepositoryImpl userRepository;
   late final FirebaseAuth auth;
@@ -44,6 +45,12 @@ class RegisterInfoBasicController extends GetxController {
   List<String> optionsCoverage = ['SURA', 'TU EPS'];
   RxString optionsCoverageItemSelected = "SURA".obs;
 
+  bool areAllImagesUploaded = false;
+
+  void togglePasswordVisibility() {
+    isObscure.value = !isObscure.value;
+  }
+
   Future<void> takeIdFrontPhoto() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
@@ -51,6 +58,8 @@ class RegisterInfoBasicController extends GetxController {
       idFrontImageCedula = File(pickedFile.path);
       update();
     }
+
+    areAllImagesUploaded = checkIfAllImagesUploaded();
   }
 
   Future<void> takeIdBackPhoto() async {
@@ -60,6 +69,8 @@ class RegisterInfoBasicController extends GetxController {
       idBackImageCedula = File(pickedFile.path);
       update();
     }
+
+    areAllImagesUploaded = checkIfAllImagesUploaded();
   }
 
   Future<void> takeLicenseFrontPhoto() async {
@@ -69,6 +80,8 @@ class RegisterInfoBasicController extends GetxController {
       licenseFrontImage = File(pickedFile.path);
       update();
     }
+
+    areAllImagesUploaded = checkIfAllImagesUploaded();
   }
 
   Future<void> takeLicenseBackPhoto() async {
@@ -78,70 +91,66 @@ class RegisterInfoBasicController extends GetxController {
       licenseBackImage = File(pickedFile.path);
       update();
     }
+
+    areAllImagesUploaded = checkIfAllImagesUploaded();
   }
 
   Future<void> sendImages() async {
     try {
-      // Obtener el usuario actual
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         String userId = user.uid;
-        // Subir la imagen de la cédula frontal
+
         if (idFrontImageCedula != null) {
           await uploadImageToFirebase(idFrontImageCedula!, userId, 'idFront');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
               .ref('$userId/idFront.jpg')
               .getDownloadURL();
-          // Guardar la URL en Firestore
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userId)
               .update({'idFrontImageCedulaUrl': downloadUrl});
         }
 
-        // Subir la imagen de la cédula posterior
         if (idBackImageCedula != null) {
           await uploadImageToFirebase(idBackImageCedula!, userId, 'idBack');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
               .ref('$userId/idBack.jpg')
               .getDownloadURL();
-          // Guardar la URL en Firestore
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userId)
               .update({'idBackImageCedulaUrl': downloadUrl});
         }
 
-        // Subir la imagen de la licencia frontal
         if (licenseFrontImage != null) {
           await uploadImageToFirebase(
               licenseFrontImage!, userId, 'licenseFront');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
               .ref('$userId/licenseFront.jpg')
               .getDownloadURL();
-          // Guardar la URL en Firestore
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userId)
               .update({'licenseFrontImageUrl': downloadUrl});
         }
 
-        // Subir la imagen de la licencia posterior
         if (licenseBackImage != null) {
           await uploadImageToFirebase(licenseBackImage!, userId, 'licenseBack');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
               .ref('$userId/licenseBack.jpg')
               .getDownloadURL();
-          // Guardar la URL en Firestore
           await FirebaseFirestore.instance
               .collection('users')
               .doc(userId)
               .update({'licenseBackImageUrl': downloadUrl});
         }
-        Get.snackbar('Éxito', 'Las imágenes se han subido y guardado en Firestore.');
+        Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
       }
-    } catch (e) {
-      Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
+    } catch (e) {        Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
+
+
+    Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
     }
   }
 
@@ -165,46 +174,73 @@ class RegisterInfoBasicController extends GetxController {
     dateBirthController.text = DateTime.now().toLocal().toString().split(' ')[0];
   }
 
-   onRoleChanged(String newValue) {
+  onRoleChanged(String newValue) {
     currentItemSelected.value = newValue;
+  }
+
+  bool validateFields() {
+    return formKey.currentState!.validate() && formKey2.currentState!.validate();
   }
 
   Future<void> signUp() async {
     showProgressBar.value = true;
     if (formKey.currentState!.validate() || formKey2.currentState!.validate()) {
+      if (!checkIfAllImagesUploaded()) {
+        Get.showSnackbar(const CustomSnackbar("Debes subir todas las imágenes obligatorias."));
+        showProgressBar.value = false;
+        return;
+      }
+
       try {
         final signUpUseCase = SignUpUseCase(userRepository);
         DateTime dateBirth = DateTime.parse(dateBirthController.text.trim());
         DateTime dateExpiration = DateTime.parse(dateExpirationLicense.text.trim());
         DateTime fechaVencimiento = DateTime.parse(licensCurrentlyExpired.text.trim());
         await signUpUseCase.execute(
-          currentItemSelected.value.trim(),
-          document.text.trim(),
-          fullName.text.trim(),
-          contacto.text.trim(),
-          email.text.trim(),
-          passwordController.text.trim(),
-          userStatus.value.trim(),
+            currentItemSelected.value.trim(),
+            document.text.trim(),
+            fullName.text.trim(),
+            contacto.text.trim(),
+            email.text.trim(),
+            passwordController.text.trim(),
+            userStatus.value.trim(),
             dateBirth,
             dateExpiration,
             fechaVencimiento,
             optionsCoverageItemSelected.value.trim(),
-          address.text.trim()
+            address.text.trim()
         );
 
-        // Ahora, el usuario está registrado. Sube las imágenes.
+        // Ahora, el usuario está registrado. se Sube las imágenes.
         await sendImages();
 
         Get.offNamed(Routes.HOME_VALIDATION);
         showProgressBar.value = false;
       } on FirebaseAuthException catch (e) {
+        final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
         Get.back();
-        Get.showSnackbar(ErrorSnackbar(e.message ?? e.code));
+        Get.showSnackbar(CustomSnackbar(customErrorMessage,icons: Icons.error_outline));
       } finally {
-        showProgressBar.value;
+        showProgressBar.value = false;
       }
-    } else {
-      showProgressBar.value;
+    }
+  }
+
+  bool checkIfAllImagesUploaded() {
+    return idFrontImageCedula != null &&
+        idBackImageCedula != null &&
+        licenseFrontImage != null &&
+        licenseBackImage != null;
+  }
+
+  Future<bool> isEmailAlreadyRegistered(String email) async {
+    try {
+      List<String> methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email.trim());
+      return methods.isNotEmpty;
+    }on FirebaseAuthException catch (e) {
+      final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Validar los campos.";
+      Get.showSnackbar(CustomSnackbar(customErrorMessage,icons: Icons.error_outline));
+      return false;
     }
   }
 
@@ -238,4 +274,3 @@ class RegisterInfoBasicController extends GetxController {
     }
   }
 }
-

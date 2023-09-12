@@ -1,9 +1,11 @@
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/loading/loading_page.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepOneContent.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepThreeCamara.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepTwoContent.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -100,22 +102,29 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                     onStepCancel: () {
                       controller.onPreviousStep();
                     },
-                    onStepTapped: (int index) {
-                      controller.activeStepIndex.value = index;
-                    },
-                    controlsBuilder:
-                        (BuildContext context, ControlsDetails controlsDetails) {
-                      final isLastStep =
-                          controller.activeStepIndex.value == stepList().length - 1;
+                    onStepTapped: (int index) {controller.activeStepIndex.value = index;},
+                    controlsBuilder: (BuildContext context, ControlsDetails controlsDetails) {
+                      final isLastStep = controller.activeStepIndex.value == stepList().length - 1;
                       return Container(
                         color: Colors.black,
                         child: Row(
                           children: [
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: ()  async {
+                                  bool isEmailRegistered = await controller.isEmailAlreadyRegistered(controller.email.text.trim());
                                   if (isLastStep) {
-                                    _.signUp();
+                                    if (controller.validateFields()) {
+                                      // Validar correo electrónico
+                                      if (isEmailRegistered) {
+                                        Get.showSnackbar(const CustomSnackbar('Este correo electrónico ya está registrado.',icons: Icons.error_outline));
+                                        return;
+                                      }
+                                      // Continuar con el registro si no hay errores
+                                      _.signUp();
+                                    } else {
+                                      Get.showSnackbar(const CustomSnackbar('Por favor, completa todos los campos correctamente.',icons: Icons.error_outline));
+                                    }
                                   } else {
                                     controlsDetails.onStepContinue!();
                                   }
@@ -128,13 +137,10 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                                     side: const BorderSide(color: Colors.white),
                                   ),
                                 ),
-                                child: (isLastStep)
-                                    ? const Text(
-                                  'Enviar',
+                                child: (isLastStep) ? const Text('Enviar',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 )
-                                    : const Text(
-                                  'Continuar',
+                                    : const Text('Continuar',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -166,11 +172,7 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                   ),
                 ),
                 if (controller.showProgressBar.value)
-                  const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
+                const LoadingPage(message: "Enviando información...")
               ],
             );
           }),

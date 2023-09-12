@@ -64,14 +64,14 @@ class LoginController extends GetxController {
       }on FirebaseAuthException catch (e) {
         final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
         Get.back();
-        Get.showSnackbar(ErrorSnackbar(customErrorMessage));
+        Get.showSnackbar(CustomSnackbar(customErrorMessage,icons: Icons.error_outline));
       }
     }
   }
 
   void _showProgressDialog() {
     Get.dialog(
-      const Center(child: CircularProgressIndicator()),
+      const Center(child: CircularProgressIndicator(color: Colors.blueAccent,)),
       barrierDismissible: false,
     );
   }
