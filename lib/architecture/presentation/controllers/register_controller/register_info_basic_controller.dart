@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
@@ -30,7 +31,9 @@ class RegisterInfoBasicController extends GetxController {
   final RxString userStatus = "En proceso".obs;
   final TextEditingController dateBirthController = TextEditingController();
   final TextEditingController dateExpirationLicense = TextEditingController();
-  final TextEditingController licensCurrentlyExpired = TextEditingController();
+  final TextEditingController fechaVigenciaA2 = TextEditingController();
+  final TextEditingController fechaVigenciaB1 = TextEditingController();
+  final TextEditingController fechaVigenciaC1 = TextEditingController();
   final TextEditingController zoneCoverage = TextEditingController();
   final TextEditingController address = TextEditingController();
   DateTime selectedDate = DateTime.now();
@@ -46,6 +49,30 @@ class RegisterInfoBasicController extends GetxController {
   RxString optionsCoverageItemSelected = "SURA".obs;
 
   bool areAllImagesUploaded = false;
+  bool isCategoryA2Selected = false;
+  bool isCategoryB1Selected = false;
+  bool isCategoryC1Selected = false;
+  bool showExpirationDateA2 = false;
+  bool showExpirationDateB1 = false;
+  bool showExpirationDateC1 = false;
+
+  void onCategorySelected(bool value, String category) {
+    switch (category) {
+      case 'A2':
+        isCategoryA2Selected = value;
+        showExpirationDateA2 = value;
+        break;
+      case 'B1':
+        isCategoryB1Selected = value;
+        showExpirationDateB1 = value;
+        break;
+      case 'C1':
+        isCategoryC1Selected = value;
+        showExpirationDateC1 = value;
+        break;
+    }
+    update();
+  }
 
   void togglePasswordVisibility() {
     isObscure.value = !isObscure.value;
@@ -107,7 +134,7 @@ class RegisterInfoBasicController extends GetxController {
               .ref('$userId/idFront.jpg')
               .getDownloadURL();
           await FirebaseFirestore.instance
-              .collection('users')
+              .collection('driver')
               .doc(userId)
               .update({'idFrontImageCedulaUrl': downloadUrl});
         }
@@ -118,7 +145,7 @@ class RegisterInfoBasicController extends GetxController {
               .ref('$userId/idBack.jpg')
               .getDownloadURL();
           await FirebaseFirestore.instance
-              .collection('users')
+              .collection('driver')
               .doc(userId)
               .update({'idBackImageCedulaUrl': downloadUrl});
         }
@@ -130,7 +157,7 @@ class RegisterInfoBasicController extends GetxController {
               .ref('$userId/licenseFront.jpg')
               .getDownloadURL();
           await FirebaseFirestore.instance
-              .collection('users')
+              .collection('driver')
               .doc(userId)
               .update({'licenseFrontImageUrl': downloadUrl});
         }
@@ -141,13 +168,13 @@ class RegisterInfoBasicController extends GetxController {
               .ref('$userId/licenseBack.jpg')
               .getDownloadURL();
           await FirebaseFirestore.instance
-              .collection('users')
+              .collection('driver')
               .doc(userId)
               .update({'licenseBackImageUrl': downloadUrl});
         }
         Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
       }
-    } catch (e) {        Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
+    } catch (e) { Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
 
 
     Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
@@ -174,8 +201,12 @@ class RegisterInfoBasicController extends GetxController {
     dateBirthController.text = DateTime.now().toLocal().toString().split(' ')[0];
   }
 
-  onRoleChanged(String newValue) {
+  onDocumentChanged(String newValue) {
     currentItemSelected.value = newValue;
+  }
+
+  onEpsChanged(String newValue) {
+    optionsCoverageItemSelected.value = newValue;
   }
 
   bool validateFields() {
@@ -184,9 +215,18 @@ class RegisterInfoBasicController extends GetxController {
 
   Future<void> signUp() async {
     showProgressBar.value = true;
-    if (formKey.currentState!.validate() || formKey2.currentState!.validate()) {
+    if (formKey.currentState!.validate() && formKey2.currentState!.validate()) {
       if (!checkIfAllImagesUploaded()) {
         Get.showSnackbar(const CustomSnackbar("Debes subir todas las imágenes obligatorias."));
+        showProgressBar.value = false;
+        return;
+      }
+
+      // Validar que al menos una categoría esté seleccionada
+      if (!isCategoryA2Selected &&
+          !isCategoryB1Selected &&
+          !isCategoryC1Selected) {
+        Get.showSnackbar(const CustomSnackbar("Debes seleccionar al menos una categoría."));
         showProgressBar.value = false;
         return;
       }
@@ -194,37 +234,82 @@ class RegisterInfoBasicController extends GetxController {
       try {
         final signUpUseCase = SignUpUseCase(userRepository);
         DateTime dateBirth = DateTime.parse(dateBirthController.text.trim());
-        DateTime dateExpiration = DateTime.parse(dateExpirationLicense.text.trim());
-        DateTime fechaVencimiento = DateTime.parse(licensCurrentlyExpired.text.trim());
+        tz.initializeTimeZones(); // Inicializa las zonas horarias
+        final location = tz.getLocation('America/Bogota');
+        DateTime dateOfRegistration = tz.TZDateTime.now(location);
+
         await signUpUseCase.execute(
-            currentItemSelected.value.trim(),
-            document.text.trim(),
-            fullName.text.trim(),
-            contacto.text.trim(),
-            email.text.trim(),
-            passwordController.text.trim(),
-            userStatus.value.trim(),
-            dateBirth,
-            dateExpiration,
-            fechaVencimiento,
-            optionsCoverageItemSelected.value.trim(),
-            address.text.trim()
+          currentItemSelected.value.trim(),
+          document.text.trim(),
+          fullName.text.trim(),
+          contacto.text.trim(),
+          email.text.trim(),
+          passwordController.text.trim(),
+          userStatus.value.trim(),
+          dateBirth,
+          optionsCoverageItemSelected.value.trim(),
+          address.text.trim(),
+          dateOfRegistration.toIso8601String()
         );
 
-        // Ahora, el usuario está registrado. se Sube las imágenes.
         await sendImages();
 
+        List<String> categorias = ['A2', 'B1', 'C1'];
+
+        DateTime? fechaA2 = fechaVigenciaA2.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaA2.text.trim()) : null;
+        DateTime? fechaB1 = fechaVigenciaB1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaB1.text.trim()) : null;
+        DateTime? fechaC1 = fechaVigenciaC1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaC1.text.trim()) : null;
+
+        Map<String, DateTime?> fechasExpedicion = {
+          if (fechaA2 != null) 'A2': fechaA2,
+          if (fechaB1 != null) 'B1': fechaB1,
+          if (fechaC1 != null) 'C1': fechaC1,
+        };
+
+        await enviarDatosAFirebase(categorias, fechasExpedicion);
+
         Get.offNamed(Routes.HOME_VALIDATION);
-        showProgressBar.value = false;
       } on FirebaseAuthException catch (e) {
         final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
         Get.back();
-        Get.showSnackbar(CustomSnackbar(customErrorMessage,icons: Icons.error_outline));
+        Get.showSnackbar(CustomSnackbar(customErrorMessage, icons: Icons.error_outline));
       } finally {
         showProgressBar.value = false;
       }
+    } else {
+      showProgressBar.value = false;
     }
   }
+
+  Future<void> enviarDatosAFirebase(List<String> categorias, Map<String, DateTime?> fechasExpedicion) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+
+        Map<String, String> categoriasConFechas = {};
+
+        for (var categoria in categorias) {
+          DateTime? fecha = fechasExpedicion[categoria];
+          if (fecha != null) {
+            categoriasConFechas[categoria] = '($categoria) - ${fecha.toIso8601String()}';
+          }
+        }
+
+        if (categoriasConFechas.isNotEmpty) {
+          await FirebaseFirestore.instance.collection('driver').doc(userId).set(
+            {'categorias_y_fechas_vigencia': categoriasConFechas},
+            SetOptions(merge: true),
+          );
+
+          Get.showSnackbar(const CustomSnackbar("Información enviada a Firebase.", backgroundColors: Colors.lightGreen, icons: Icons.offline_pin));
+        }
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo enviar la información a Firebase: $e');
+    }
+  }
+
 
   bool checkIfAllImagesUploaded() {
     return idFrontImageCedula != null &&

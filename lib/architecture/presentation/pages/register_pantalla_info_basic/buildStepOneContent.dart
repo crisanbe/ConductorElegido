@@ -67,7 +67,7 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
                   options: controller.options,
                   value: controller.currentItemSelected.value,
                   onChanged: (String? newValueSelected) {
-                    controller.onRoleChanged(newValueSelected!);
+                    controller.onDocumentChanged(newValueSelected!);
                   },
                   labelColor: Colors.white,
                   enabledBorderColor: Colors.white,

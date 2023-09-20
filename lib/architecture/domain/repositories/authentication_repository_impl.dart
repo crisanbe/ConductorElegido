@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conductor_elegido/architecture/data/firebase/auth_firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,10 +18,9 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       String password,
       String status,
       DateTime dateBirth,
-      DateTime dateExpirationLicense,
-      DateTime licensCurrentlyExpired,
       String ZoneCoverage,
-      String Address
+      String Address,
+      String DateOfRegistration
       ) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -27,7 +28,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         password: password,
       );
 
-      await _firebaseFirestore.collection('users').doc(userCredential.user!.uid).set({
+      await _firebaseFirestore.collection('driver').doc(userCredential.user!.uid).set({
         'typeDocument': typeDocument,
         'document': document,
         'fullName': fullName,
@@ -36,10 +37,9 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         'password': password,
         'status': status,
         'dateBirth': dateBirth,
-        'dateExpirationLicense': dateExpirationLicense,
-        'licensCurrentlyExpired': licensCurrentlyExpired,
-        'ZoneCoverage': ZoneCoverage,
-        'Address': Address
+        'zoneCoverage': ZoneCoverage,
+        'address': Address,
+        'dateOfRegistration': DateOfRegistration,
       });
     } catch (e) {
       throw e;
@@ -48,7 +48,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   Future<Map<String, dynamic>?> getUserData(String uid) async {
     try {
-      DocumentSnapshot snapshot = await _firebaseFirestore.collection('users').doc(uid).get();
+      DocumentSnapshot snapshot = await _firebaseFirestore.collection('driver').doc(uid).get();
       if (snapshot.exists) {
         return snapshot.data() as Map<String, dynamic>;
       }

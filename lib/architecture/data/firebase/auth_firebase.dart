@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 abstract class AuthenticationRepository {
   Future<void> signUpUser(
       String typeDocument,
@@ -8,10 +10,9 @@ abstract class AuthenticationRepository {
       String password,
       String status,
       DateTime dateBirth,
-      DateTime dateExpirationLicense,
-      DateTime licensCurrentlyExpired,
       String ZoneCoverage,
-      String Address
+      String Address,
+      String DateOfRegistration
       );
 
   Future<void> login(
