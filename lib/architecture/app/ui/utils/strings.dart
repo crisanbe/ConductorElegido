@@ -9,6 +9,6 @@ class AppStrings {
   static const password = "Clave";
   static const emailAddress = "Correo electrónico";
 
-  static const activeDriverStatus = "Activo";
-  static const driverStatusInRegistrationProgress = "En proceso";
+  static const activeDriverStatus = 1;
+  static const driverStatusInRegistrationProgress = 0;
 }

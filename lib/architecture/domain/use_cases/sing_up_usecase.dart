@@ -12,7 +12,7 @@ class SignUpUseCase {
       String contacto,
       String email,
       String password,
-      String status,
+      int status,
       DateTime dateBirth,
       String ZoneCoverage,
       String Address,

@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:image_picker/image_picker.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
+import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class RegisterInfoBasicController extends GetxController {
   final picker = ImagePicker();
@@ -28,7 +28,7 @@ class RegisterInfoBasicController extends GetxController {
   final TextEditingController contacto = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final RxString userStatus = "En proceso".obs;
+  final RxInt userStatus = 0.obs;
   final TextEditingController dateBirthController = TextEditingController();
   final TextEditingController dateExpirationLicense = TextEditingController();
   final TextEditingController fechaVigenciaA2 = TextEditingController();
@@ -198,7 +198,6 @@ class RegisterInfoBasicController extends GetxController {
     showProgressBar.value;
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
     });
-    dateBirthController.text = DateTime.now().toLocal().toString().split(' ')[0];
   }
 
   onDocumentChanged(String newValue) {
@@ -237,6 +236,7 @@ class RegisterInfoBasicController extends GetxController {
         tz.initializeTimeZones(); // Inicializa las zonas horarias
         final location = tz.getLocation('America/Bogota');
         DateTime dateOfRegistration = tz.TZDateTime.now(location);
+        int status = userStatus.value;
 
         await signUpUseCase.execute(
           currentItemSelected.value.trim(),
@@ -245,7 +245,7 @@ class RegisterInfoBasicController extends GetxController {
           contacto.text.trim(),
           email.text.trim(),
           passwordController.text.trim(),
-          userStatus.value.trim(),
+          status,
           dateBirth,
           optionsCoverageItemSelected.value.trim(),
           address.text.trim(),
@@ -331,19 +331,31 @@ class RegisterInfoBasicController extends GetxController {
 
   Future<void> showCalendarAndUpdateText(
       BuildContext context,
-      TextEditingController textController,
-      ) async {
+      TextEditingController textController, {
+      String? field,
+      }) async {
+    DateTime lastSelectableDate;
+
+    // Verificar si el campo es la fecha de nacimiento
+    if (field == 'dateBirth') {
+      lastSelectableDate = DateTime.now();
+    } else {
+      lastSelectableDate = DateTime(2101); // Otras fechas permitidas
+    }
+
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: selectedDate ,
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: lastSelectableDate,
     );
+
     if (pickedDate != null) {
       selectedDate = pickedDate;
       textController.text = pickedDate.toLocal().toString().split(' ')[0];
     }
   }
+
 
   onNextStep(List<Step> steps) {
     if (activeStepIndex.value < (steps.length - 1)) {

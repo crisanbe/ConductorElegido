@@ -34,12 +34,11 @@ Future<String> _getInitialRoute(LoginController registerController) async {
   final currentUser = auth.currentUser;
 
   if (currentUser == null) {
-    // El usuario ha cerrado sesión, así que limpia el estado local.
-    registerController.updateUserStatus("");
-  }
-
-  if (currentUser != null) {
+    // El usuario no está autenticado, lo redirigimos a la pantalla de inicio de sesión.
+    return Routes.LOGIN;
+  } else {
     final userData = await registerController.authenticationRepository.getUserData(currentUser.uid);
+
     if (userData != null) {
       final status = userData['status'];
       if (status == AppStrings.activeDriverStatus) {
@@ -48,7 +47,10 @@ Future<String> _getInitialRoute(LoginController registerController) async {
         return Routes.HOME_VALIDATION;
       }
     }
+
+    // Si no hay datos de usuario o el estado no coincide con ninguno de los casos anteriores,
+    // redirigir a una pantalla de inicio por defecto.
+    return Routes.LOGIN;
   }
-  return Routes.LOGIN; // Default route para otros casos
 }
 

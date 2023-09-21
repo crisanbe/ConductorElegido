@@ -3,10 +3,8 @@ import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/login_usecase.dart';
-import 'package:conductor_elegido/architecture/presentation/pages/home/home_validation_pages.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +14,7 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   late final AuthenticationRepositoryImpl authenticationRepository;
   late final FirebaseAuth auth;
-  final RxString status = "".obs;
+  final RxInt status = 0.obs;
   RxBool isObscure = true.obs;
   late final RxBool _showProgress;
   bool get showProgress => _showProgress.value;
@@ -41,7 +39,7 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  String updateUserStatus(String newStatus) {
+  int updateUserStatus(int newStatus) {
     status.value = newStatus;
     return newStatus;
   }

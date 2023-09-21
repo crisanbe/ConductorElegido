@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conductor_elegido/architecture/data/firebase/auth_firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +14,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       String contacto,
       String email,
       String password,
-      String status,
+      int status,
       DateTime dateBirth,
       String ZoneCoverage,
       String Address,

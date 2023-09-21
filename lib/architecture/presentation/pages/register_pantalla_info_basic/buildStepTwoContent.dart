@@ -20,7 +20,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
         key: _.formKey2,
         child: Column(
           children: [
-            /*Container(
+            Container(
               width: 220,
               height: 220,
               decoration: const BoxDecoration(
@@ -28,7 +28,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   image: AssetImage('assets/images/information_complement.png'),
                 ),
               ),
-            ),*/
+            ),
             const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -59,7 +59,16 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
               ),
             ),
                 CheckboxListTile(
-                  title: const Text('Categoría A2', style: TextStyle(color:Colors.white)),
+                  title: const Row(
+                    children: [
+                      Icon(Icons.directions_car,color: Colors.white), // Agrega el icono aquí
+                      SizedBox(width: 8), // Un pequeño espacio entre el icono y el texto
+                      Text(
+                        'Categoría A2',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                   value: controller.isCategoryA2Selected,
                   checkColor: Colors.black,
                   fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
@@ -75,7 +84,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   customTextFormField(
                     focusNode: fechaVigenciaA2Focus,
                     controller: _.fechaVigenciaA2,
-                    hintText: 'Seleccionar Fecha A2',
+                    hintText: 'Fecha de vigencia licencia A2',
                     prefixIcon: Icons.access_time_outlined,
                     onTap: () => _.showCalendarAndUpdateText(context, _.fechaVigenciaA2),
                     validator: (value) {
@@ -87,7 +96,16 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                     onChanged: (value) {},
                   ),
                 CheckboxListTile(
-                  title: const Text('Categoría B1',style: TextStyle(color:Colors.white)),
+                  title: const Row(
+                    children: [
+                      Icon(Icons.motorcycle,color: Colors.white), // Agrega el icono aquí
+                      SizedBox(width: 8), // Un pequeño espacio entre el icono y el texto
+                      Text(
+                        'Categoría B1',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                   checkColor: Colors.black,
                   fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
                   value: controller.isCategoryB1Selected,
@@ -103,7 +121,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   customTextFormField(
                     focusNode: fechaVigenciaB1Focus,
                     controller: _.fechaVigenciaB1,
-                    hintText: 'Fecha de vencimiento licencia',
+                    hintText: 'Fecha de vigencia licencia B1',
                     prefixIcon: Icons.access_time_outlined,
                     onTap: () => _.showCalendarAndUpdateText(context, _.fechaVigenciaB1),
                     validator: (value) {
@@ -115,7 +133,16 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                     onChanged: (value) {},
                   ),
                 CheckboxListTile(
-                  title: const Text('Categoría C1', style: TextStyle(color:Colors.white)),
+                  title: const Row(
+                    children: [
+                      Icon(Icons.local_taxi,color: Colors.white), // Agrega el icono aquí
+                      SizedBox(width: 8), // Un pequeño espacio entre el icono y el texto
+                      Text(
+                        'Categoría C1',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                   checkColor: Colors.black,
                   fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
                   value: controller.isCategoryC1Selected,
@@ -131,7 +158,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                   customTextFormField(
                     focusNode: fechaVigenciaC1Focus,
                     controller: _.fechaVigenciaC1,
-                    hintText: 'Fecha de vencimiento licencia',
+                    hintText: 'Fecha de vigencia licencia C1',
                     prefixIcon: Icons.access_time_outlined,
                     onTap: () =>  _.showCalendarAndUpdateText(context, _.fechaVigenciaC1),
                     validator: (value) {
@@ -148,11 +175,12 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
               controller: _.dateBirthController,
               hintText: 'Fecha de nacimiento',
               prefixIcon: Icons.date_range_rounded,
-              onTap: () =>  _.showCalendarAndUpdateText(context, _.dateBirthController),
+              onTap: () =>  _.showCalendarAndUpdateText(context, _.dateBirthController, field: 'dateBirth'),
               validator: (value) {
                 if (value!.isEmpty) {
                   return "Este campo es requerido";
                 }
+                return null; // La validación pasa si el campo no está vacío
               },
               keyboardType: TextInputType.datetime,
               onChanged: (value) {},
