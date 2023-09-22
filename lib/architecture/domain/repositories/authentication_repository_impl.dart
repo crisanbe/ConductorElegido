@@ -11,14 +11,14 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       String typeDocument,
       String document,
       String fullName,
-      String contacto,
+      String contact,
       String email,
       String password,
       int status,
       DateTime dateBirth,
       String ZoneCoverage,
       String Address,
-      String DateOfRegistration
+      String Createat
       ) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -30,14 +30,14 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         'typeDocument': typeDocument,
         'document': document,
         'fullName': fullName,
-        'contacto': contacto,
+        'contact': contact,
         'email': email,
         'password': password,
         'status': status,
         'dateBirth': dateBirth,
         'zoneCoverage': ZoneCoverage,
         'address': Address,
-        'dateOfRegistration': DateOfRegistration,
+        'createat': Createat,
       });
     } catch (e) {
       throw e;

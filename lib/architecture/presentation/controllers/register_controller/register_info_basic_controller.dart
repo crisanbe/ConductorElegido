@@ -30,13 +30,11 @@ class RegisterInfoBasicController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   final RxInt userStatus = 0.obs;
   final TextEditingController dateBirthController = TextEditingController();
-  final TextEditingController dateExpirationLicense = TextEditingController();
   final TextEditingController fechaVigenciaA2 = TextEditingController();
   final TextEditingController fechaVigenciaB1 = TextEditingController();
   final TextEditingController fechaVigenciaC1 = TextEditingController();
   final TextEditingController zoneCoverage = TextEditingController();
   final TextEditingController address = TextEditingController();
-  DateTime selectedDate = DateTime.now();
 
   late final AuthenticationRepositoryImpl userRepository;
   late final FirebaseAuth auth;
@@ -120,6 +118,13 @@ class RegisterInfoBasicController extends GetxController {
     }
 
     areAllImagesUploaded = checkIfAllImagesUploaded();
+  }
+
+  bool isUserAdult(DateTime dateOfBirth) {
+    DateTime currentDate = DateTime.now();
+    DateTime adultDate = currentDate.subtract(const Duration(days: 18 * 365)); // Restar 18 años
+
+    return dateOfBirth.isBefore(adultDate);
   }
 
   Future<void> sendImages() async {
@@ -214,7 +219,7 @@ class RegisterInfoBasicController extends GetxController {
 
   Future<void> signUp() async {
     showProgressBar.value = true;
-    if (formKey.currentState!.validate() && formKey2.currentState!.validate()) {
+    if (formKey.currentState!.validate() || formKey2.currentState!.validate()) {
       if (!checkIfAllImagesUploaded()) {
         Get.showSnackbar(const CustomSnackbar("Debes subir todas las imágenes obligatorias."));
         showProgressBar.value = false;
@@ -231,6 +236,31 @@ class RegisterInfoBasicController extends GetxController {
       }
 
       try {
+        List<String> categorias = ['A2', 'B1', 'C1'];
+
+        DateTime? fechaA2 = fechaVigenciaA2.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaA2.text.trim()) : null;
+        DateTime? fechaB1 = fechaVigenciaB1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaB1.text.trim()) : null;
+        DateTime? fechaC1 = fechaVigenciaC1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaC1.text.trim()) : null;
+
+        // Validar la vigencia de las categorías
+        if (fechaA2 != null && fechaA2.isBefore(DateTime.now())) {
+          Get.showSnackbar(const CustomSnackbar("La categoría A2 está vencida. No se puede registrar."));
+          showProgressBar.value = false;
+          return;
+        }
+
+        if (fechaB1 != null && fechaB1.isBefore(DateTime.now())) {
+          Get.showSnackbar(const CustomSnackbar("La categoría B1 está vencida. No se puede registrar."));
+          showProgressBar.value = false;
+          return;
+        }
+
+        if (fechaC1 != null && fechaC1.isBefore(DateTime.now())) {
+          Get.showSnackbar(const CustomSnackbar("La categoría C1 está vencida. No se puede registrar."));
+          showProgressBar.value = false;
+          return;
+        }
+
         final signUpUseCase = SignUpUseCase(userRepository);
         DateTime dateBirth = DateTime.parse(dateBirthController.text.trim());
         tz.initializeTimeZones(); // Inicializa las zonas horarias
@@ -238,27 +268,27 @@ class RegisterInfoBasicController extends GetxController {
         DateTime dateOfRegistration = tz.TZDateTime.now(location);
         int status = userStatus.value;
 
+        if (!isUserAdult(dateBirth)) {
+          Get.showSnackbar(const CustomSnackbar("El usuario debe tener al menos 18 años para registrarse."));
+          showProgressBar.value = false;
+          return;
+        }
+
         await signUpUseCase.execute(
-          currentItemSelected.value.trim(),
-          document.text.trim(),
-          fullName.text.trim(),
-          contacto.text.trim(),
-          email.text.trim(),
-          passwordController.text.trim(),
-          status,
-          dateBirth,
-          optionsCoverageItemSelected.value.trim(),
-          address.text.trim(),
-          dateOfRegistration.toIso8601String()
+            currentItemSelected.value.trim(),
+            document.text.trim(),
+            fullName.text.trim(),
+            contacto.text.trim(),
+            email.text.trim(),
+            passwordController.text.trim(),
+            status,
+            dateBirth,
+            optionsCoverageItemSelected.value.trim(),
+            address.text.trim(),
+            dateOfRegistration.toIso8601String()
         );
 
         await sendImages();
-
-        List<String> categorias = ['A2', 'B1', 'C1'];
-
-        DateTime? fechaA2 = fechaVigenciaA2.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaA2.text.trim()) : null;
-        DateTime? fechaB1 = fechaVigenciaB1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaB1.text.trim()) : null;
-        DateTime? fechaC1 = fechaVigenciaC1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaC1.text.trim()) : null;
 
         Map<String, DateTime?> fechasExpedicion = {
           if (fechaA2 != null) 'A2': fechaA2,
@@ -281,24 +311,25 @@ class RegisterInfoBasicController extends GetxController {
     }
   }
 
-  Future<void> enviarDatosAFirebase(List<String> categorias, Map<String, DateTime?> fechasExpedicion) async {
+
+  Future<void> enviarDatosAFirebase(List<String> categories, Map<String, DateTime?> datesExpedition) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         String userId = user.uid;
 
-        Map<String, String> categoriasConFechas = {};
+        Map<String, String> categoriesWithDates = {};
 
-        for (var categoria in categorias) {
-          DateTime? fecha = fechasExpedicion[categoria];
-          if (fecha != null) {
-            categoriasConFechas[categoria] = '($categoria) - ${fecha.toIso8601String()}';
+        for (var categorie in categories) {
+          DateTime? date = datesExpedition[categorie];
+          if (date != null) {
+            categoriesWithDates[categorie] = '($categorie) - ${date.toIso8601String()}';
           }
         }
 
-        if (categoriasConFechas.isNotEmpty) {
+        if (categoriesWithDates.isNotEmpty) {
           await FirebaseFirestore.instance.collection('driver').doc(userId).set(
-            {'categorias_y_fechas_vigencia': categoriasConFechas},
+            {'categories_and_dates': categoriesWithDates},
             SetOptions(merge: true),
           );
 
@@ -309,7 +340,6 @@ class RegisterInfoBasicController extends GetxController {
       Get.snackbar('Error', 'No se pudo enviar la información a Firebase: $e');
     }
   }
-
 
   bool checkIfAllImagesUploaded() {
     return idFrontImageCedula != null &&
@@ -334,13 +364,15 @@ class RegisterInfoBasicController extends GetxController {
       TextEditingController textController, {
       String? field,
       }) async {
+
+    DateTime selectedDate = DateTime.now();
     DateTime lastSelectableDate;
 
     // Verificar si el campo es la fecha de nacimiento
     if (field == 'dateBirth') {
       lastSelectableDate = DateTime.now();
     } else {
-      lastSelectableDate = DateTime(2101); // Otras fechas permitidas
+      lastSelectableDate = DateTime(2101);
     }
 
     final pickedDate = await showDatePicker(

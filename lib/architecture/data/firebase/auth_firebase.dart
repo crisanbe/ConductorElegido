@@ -4,14 +4,14 @@ abstract class AuthenticationRepository {
       String typeDocument,
       String document,
       String fullName,
-      String contacto,
+      String contact,
       String email,
       String password,
       int status,
       DateTime dateBirth,
       String ZoneCoverage,
       String Address,
-      String DateOfRegistration
+      String Createat
       );
 
   Future<void> login(

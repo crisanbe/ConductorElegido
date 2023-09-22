@@ -61,7 +61,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                 CheckboxListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.directions_car,color: Colors.white), // Agrega el icono aquí
+                      Icon(Icons.motorcycle_rounded,color: Colors.white), // Agrega el icono aquí
                       SizedBox(width: 8), // Un pequeño espacio entre el icono y el texto
                       Text(
                         'Categoría A2',
@@ -98,7 +98,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                 CheckboxListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.motorcycle,color: Colors.white), // Agrega el icono aquí
+                      Icon(Icons.directions_car_sharp,color: Colors.white), // Agrega el icono aquí
                       SizedBox(width: 8), // Un pequeño espacio entre el icono y el texto
                       Text(
                         'Categoría B1',
@@ -135,7 +135,7 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
                 CheckboxListTile(
                   title: const Row(
                     children: [
-                      Icon(Icons.local_taxi,color: Colors.white), // Agrega el icono aquí
+                      Icon(Icons.local_taxi_sharp,color: Colors.white),
                       SizedBox(width: 8), // Un pequeño espacio entre el icono y el texto
                       Text(
                         'Categoría C1',
@@ -175,16 +175,16 @@ class BuildStepTwoContent extends GetView<RegisterInfoBasicController> {
               controller: _.dateBirthController,
               hintText: 'Fecha de nacimiento',
               prefixIcon: Icons.date_range_rounded,
-              onTap: () =>  _.showCalendarAndUpdateText(context, _.dateBirthController, field: 'dateBirth'),
+              onTap: () => _.showCalendarAndUpdateText(context, _.dateBirthController, field: 'dateBirth'),
               validator: (value) {
                 if (value!.isEmpty) {
                   return "Este campo es requerido";
                 }
-                return null; // La validación pasa si el campo no está vacío
               },
               keyboardType: TextInputType.datetime,
               onChanged: (value) {},
             ),
+
             const SizedBox(height: 15),
             SizedBox(
               width: 320,

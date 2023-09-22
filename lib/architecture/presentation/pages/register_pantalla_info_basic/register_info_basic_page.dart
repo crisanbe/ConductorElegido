@@ -4,6 +4,7 @@ import 'package:conductor_elegido/architecture/presentation/pages/loading/loadin
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepOneContent.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepThreeCamara.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepTwoContent.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/summary_screen.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:flutter/material.dart';
@@ -50,40 +51,7 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
           state: StepState.complete,
           isActive: controller.activeStepIndex.value >= 3,
           title: const Text(''),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text('typeDocument: ${_.currentItemSelected.value}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('document: ${_.document.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('fullName: ${_.fullName.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('contacto: ${_.contacto.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('email: ${_.email.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('Password: ${_.passwordController.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('status : ${_.userStatus.value}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('fechaNacimiento : ${_.dateBirthController.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('fechaExpiracion : ${_.dateExpirationLicense.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('fechaVigenciaA2 : ${_.fechaVigenciaA2.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('fechaVigenciaB1 : ${_.fechaVigenciaB1.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('fechaVigenciaC1 : ${_.fechaVigenciaC1.text}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('zoneCoverage : ${_.optionsCoverageItemSelected.value}',
-                  style: const TextStyle(color: Colors.white)),
-              Text('address : ${_.address.text}',
-                  style: const TextStyle(color: Colors.white)),
-            ],
-          ),
+          content: SummaryScreen()
         )
       ];
 
