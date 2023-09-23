@@ -1,4 +1,3 @@
-import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/loading/loading_page.dart';
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/buildStepOneContent.dart';
@@ -58,7 +57,7 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
       return Container(
         padding: const EdgeInsets.only(top: 20.0),
         child: Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.black,//color de fondo de pantalla
           body: Obx(() {
             return Stack(
               children: [
@@ -103,7 +102,7 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: Colors.blueAccent,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                     side: const BorderSide(color: Colors.white),

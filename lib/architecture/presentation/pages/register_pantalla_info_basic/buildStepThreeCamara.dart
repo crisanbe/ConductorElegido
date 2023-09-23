@@ -13,14 +13,26 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
         child: Column(
           children: [
             Container(
-              width: 190,
-              height: 190,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/register.png'),
-                ),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Image.asset(
+                'assets/images/mobile_photos.png',
+                fit: BoxFit.cover,
+                width: 150, // Cambia el ancho según tus preferencias
+                height: 150, // Cambia la altura según tus preferencias
               ),
             ),
+
             const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -41,7 +53,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
               child: Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: Text(
-                  "Verifica tu documentacion",
+                  "Información complementaria",
                   style: TextStyle(
                     fontWeight: FontWeight.normal,
                     fontSize: 15,

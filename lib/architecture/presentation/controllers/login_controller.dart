@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
@@ -5,6 +7,7 @@ import 'package:conductor_elegido/architecture/domain/repositories/authenticatio
 import 'package:conductor_elegido/architecture/domain/use_cases/login_usecase.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

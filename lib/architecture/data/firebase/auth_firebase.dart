@@ -9,9 +9,10 @@ abstract class AuthenticationRepository {
       String password,
       int status,
       DateTime dateBirth,
-      String ZoneCoverage,
-      String Address,
-      String Createat
+      String zoneCoverage,
+      String eps,
+      String address,
+      String createat
       );
 
   Future<void> login(

@@ -14,9 +14,10 @@ class SignUpUseCase {
       String password,
       int status,
       DateTime dateBirth,
-      String ZoneCoverage,
-      String Address,
-      String DateOfRegistration
+      String zoneCoverage,
+      String eps,
+      String address,
+      String dateOfRegistration
       ) async {
     await authenticationRepository.signUpUser(
         typeDocument,
@@ -27,9 +28,10 @@ class SignUpUseCase {
         password,
         status,
         dateBirth,
-        ZoneCoverage,
-        Address,
-        DateOfRegistration
+        zoneCoverage,
+        eps,
+        address,
+        dateOfRegistration
     );
   }
 }

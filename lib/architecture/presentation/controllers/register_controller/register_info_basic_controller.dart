@@ -43,8 +43,11 @@ class RegisterInfoBasicController extends GetxController {
   List<String> options = ['CC', 'Documento 2'];
   RxString currentItemSelected = "CC".obs;
 
-  List<String> optionsCoverage = ['SURA', 'TU EPS'];
-  RxString optionsCoverageItemSelected = "SURA".obs;
+  List<String> optionsEps = ['SURA', 'TU EPS'];
+  RxString optionsEpsItemSelected = "SURA".obs;
+
+  List<String> optionsCoverage = ['BOGOTA', 'MEDELLIN'];
+  RxString optionsCoverageItemSelected = "BOGOTA".obs;
 
   bool areAllImagesUploaded = false;
   bool isCategoryA2Selected = false;
@@ -210,6 +213,10 @@ class RegisterInfoBasicController extends GetxController {
   }
 
   onEpsChanged(String newValue) {
+    optionsEpsItemSelected.value = newValue;
+  }
+
+  onCoverageChanged(String newValue) {
     optionsCoverageItemSelected.value = newValue;
   }
 
@@ -284,6 +291,7 @@ class RegisterInfoBasicController extends GetxController {
             status,
             dateBirth,
             optionsCoverageItemSelected.value.trim(),
+            optionsEpsItemSelected.value.trim(),
             address.text.trim(),
             dateOfRegistration.toIso8601String()
         );

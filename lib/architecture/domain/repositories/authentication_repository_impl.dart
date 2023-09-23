@@ -16,9 +16,10 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       String password,
       int status,
       DateTime dateBirth,
-      String ZoneCoverage,
-      String Address,
-      String Createat
+      String zoneCoverage,
+      String eps,
+      String address,
+      String createat
       ) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -35,9 +36,10 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         'password': password,
         'status': status,
         'dateBirth': dateBirth,
-        'zoneCoverage': ZoneCoverage,
-        'address': Address,
-        'createat': Createat,
+        'zoneCoverage': zoneCoverage,
+        'eps': eps,
+        'address': address,
+        'createat': createat,
       });
     } catch (e) {
       throw e;
