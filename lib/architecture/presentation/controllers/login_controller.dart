@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
@@ -21,6 +22,8 @@ class LoginController extends GetxController {
   RxBool isObscure = true.obs;
   late final RxBool _showProgress;
   bool get showProgress => _showProgress.value;
+  final StreamController<Map<String, dynamic>> _userDataStreamController = StreamController.broadcast();
+  Stream<Map<String, dynamic>> get userDataStream => _userDataStreamController.stream;
 
   @override
   void onInit() {
@@ -91,8 +94,13 @@ class LoginController extends GetxController {
       Map<String, dynamic>? userData = await authenticationRepository.getUserData(currentUser.uid);
       if (userData != null) {
         updateUserStatus(userData['status']);
-        update();
+
+        // Emitir los datos actualizados a través del Stream
+        _userDataStreamController.add(userData);
+
+        update(); // Actualizar la UI si es necesario
       }
     }
   }
+
 }
