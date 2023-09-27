@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
@@ -14,13 +13,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../../app/routes/app_pages.dart';
+
 class RegisterInfoBasicController extends GetxController {
   final picker = ImagePicker();
   File? idFrontImageCedula;
   File? idBackImageCedula;
   File? licenseFrontImage;
   File? licenseBackImage;
-  File? selectedPDFFile; // Variable global para almacenar el archivo PDF seleccionado
+
+  File? selectedDocument1;
+  File? selectedDocument2;
+  File? selectedDocument3;
 
   RxString pdfFilePath = ''.obs;
   final RxInt activeStepIndex = 0.obs;
@@ -229,32 +233,57 @@ class RegisterInfoBasicController extends GetxController {
   Future<void> sendFilesToFirebase() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      if (user != null && selectedPDFFile != null) {
+      if (user != null) {
         String userId = user.uid;
 
-        await uploadFileToFirebase(selectedPDFFile!, userId, 'documents/${selectedPDFFile!.path.split('/').last}');
+        // Enviar el primer documento si está seleccionado
+        if (selectedDocument1 != null) {
+          await uploadFileToFirebase(selectedDocument1!, userId, 'documents/documento1.pdf');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/documents/documento1.pdf')
+              .getDownloadURL();
+          await FirebaseFirestore.instance
+              .collection('driver')
+              .doc(userId)
+              .update({'documento1Url': downloadUrl});
+        }
 
-        String downloadUrl = await firebase_storage.FirebaseStorage.instance
-            .ref('$userId/documents/${selectedPDFFile!.path.split('/').last}')
-            .getDownloadURL();
+        // Enviar el segundo documento si está seleccionado
+        if (selectedDocument2 != null) {
+          await uploadFileToFirebase(selectedDocument2!, userId, 'documents/documento2.pdf');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/documents/documento2.pdf')
+              .getDownloadURL();
+          await FirebaseFirestore.instance
+              .collection('driver')
+              .doc(userId)
+              .update({'documento2Url': downloadUrl});
+        }
 
-        await FirebaseFirestore.instance
-            .collection('driver')
-            .doc(userId)
-            .update({'documentUrl': downloadUrl});
+        // Enviar el tercer documento si está seleccionado
+        if (selectedDocument3 != null) {
+          await uploadFileToFirebase(selectedDocument3!, userId, 'documents/documento3.pdf');
+          String downloadUrl = await firebase_storage.FirebaseStorage.instance
+              .ref('$userId/documents/documento3.pdf')
+              .getDownloadURL();
+          await FirebaseFirestore.instance
+              .collection('driver')
+              .doc(userId)
+              .update({'documento3Url': downloadUrl});
+        }
 
         Get.showSnackbar(const CustomSnackbar(
-          "El archivo PDF se ha subido y guardado en Firestore.",
+          "Los documentos se han subido y guardado en Firestore.",
           backgroundColors: Colors.lightGreen,
           icons: Icons.offline_pin,
         ));
       }
     } catch (e) {
-      Get.snackbar('Error', 'No se pudo subir el archivo PDF: $e');
+      Get.snackbar('Error', 'No se pudieron subir los documentos: $e');
     }
   }
 
-  void selectPDFFile() async {
+  void selectDocument(int documentNumber) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
@@ -262,10 +291,25 @@ class RegisterInfoBasicController extends GetxController {
 
     if (result != null) {
       PlatformFile file = result.files.first;
-      selectedPDFFile = File(file.path ?? "Ningún archivo seleccionado");
-      pdfFilePath.value = selectedPDFFile!.path;
+      File selectedDocument = File(file.path ?? "Ningún archivo seleccionado");
+
+      switch (documentNumber) {
+        case 1:
+          selectedDocument1 = selectedDocument;
+          break;
+        case 2:
+          selectedDocument2 = selectedDocument;
+          break;
+        case 3:
+          selectedDocument3 = selectedDocument;
+          break;
+        default:
+        // Manejar un número de documento inválido si es necesario
+          break;
+      }
     }
   }
+
 
   @override
   void onInit() {
@@ -378,7 +422,7 @@ class RegisterInfoBasicController extends GetxController {
         Get.offNamed(Routes.HOME_VALIDATION);
       } on FirebaseAuthException catch (e) {
         final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
-        Get.back();
+        //Get.back();
         Get.showSnackbar(CustomSnackbar(customErrorMessage, icons: Icons.error_outline));
       } finally {
         showProgressBar.value = false;

@@ -12,11 +12,6 @@ part 'app_routes.dart';
 
 abstract class AppPages {
   static final pages = [
-   /* GetPage(
-        name: Routes.SPLASH,
-        page: () => const SplashPage(),
-        transition: Transition.native,
-        binding: SplashBinding()),*/
     GetPage(
         name: Routes.HOME,
         page: () => const HomePage(),

@@ -115,7 +115,7 @@ class HomeValidationPage extends GetView<HomeController> {
           backgroundColor: Colors.white,
           onPressed: () {
             _.signOut();
-            Get.to(() => const LoginPage());
+            Get.offAll(() => const LoginPage()); // Cambio aquí
           },
           child: const Icon(Icons.logout, color: Colors.black,),
         ),

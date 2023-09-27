@@ -261,14 +261,26 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
             ),
             SizedBox(height: 20),
 
-            // Nuevo botón para subir PDF
             ElevatedButton(
               onPressed: () {
-                _.selectPDFFile(); // Llama a la función para seleccionar el archivo PDF
+                _.selectDocument(1); // Llama a la función para seleccionar el primer documento
               },
-              child: Text('Seleccionar PDF'),
-            )
+              child: Text('Seleccionar Documento 1'),
+            ),
 
+            ElevatedButton(
+              onPressed: () {
+                _.selectDocument(2); // Llama a la función para seleccionar el segundo documento
+              },
+              child: Text('Seleccionar Documento 2'),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                _.selectDocument(3); // Llama a la función para seleccionar el segundo documento
+              },
+              child: Text('Seleccionar Documento 2'),
+            ),
           ],
         ),
       );
