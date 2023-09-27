@@ -16,6 +16,7 @@ class HomePage extends GetView<HomeController> {
     return GetBuilder<HomeController>(
       builder: (_) {
         return Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             title: const Text("Conductor Activo!"),
           ),

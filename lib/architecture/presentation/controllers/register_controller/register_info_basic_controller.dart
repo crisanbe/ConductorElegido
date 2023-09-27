@@ -5,6 +5,7 @@ import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
 import 'package:conductor_elegido/architecture/domain/use_cases/sing_up_usecase.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -19,6 +20,9 @@ class RegisterInfoBasicController extends GetxController {
   File? idBackImageCedula;
   File? licenseFrontImage;
   File? licenseBackImage;
+  File? selectedPDFFile; // Variable global para almacenar el archivo PDF seleccionado
+
+  RxString pdfFilePath = ''.obs;
   final RxInt activeStepIndex = 0.obs;
   RxBool isObscure = true.obs;
   final formKey = GlobalKey<FormState>();
@@ -56,6 +60,11 @@ class RegisterInfoBasicController extends GetxController {
   bool showExpirationDateA2 = false;
   bool showExpirationDateB1 = false;
   bool showExpirationDateC1 = false;
+
+  File? antecedentesJudicialesFile;
+  File? antecedentesProcuraduriaFile;
+  File? antecedentesPoliciaFile;
+
 
   void onCategorySelected(bool value, String category) {
     switch (category) {
@@ -183,8 +192,6 @@ class RegisterInfoBasicController extends GetxController {
         Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
       }
     } catch (e) { Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
-
-
     Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
     }
   }
@@ -195,6 +202,68 @@ class RegisterInfoBasicController extends GetxController {
       await firebase_storage.FirebaseStorage.instance.ref(fileName).putFile(imageFile);
     } catch (e) {
       print('Error al subir la imagen: $e');
+    }
+  }
+
+  Future<void> uploadFileToFirebase(File file, String userId, String storagePath) async {
+    try {
+      String fileName = '$userId/$storagePath';
+      await firebase_storage.FirebaseStorage.instance.ref(fileName).putFile(file);
+
+      // Obtener el enlace de descarga
+      String downloadUrl = await firebase_storage.FirebaseStorage.instance
+          .ref(fileName)
+          .getDownloadURL();
+
+      // Guardar el enlace en la colección driver
+      await FirebaseFirestore.instance
+          .collection('driver')
+          .doc(userId)
+          .update({'${storagePath}Url': downloadUrl}); // Asumiendo que el campo se llama 'nombreDelCampoUrl'
+
+    } catch (e) {
+      print('Error al subir el archivo: $e');
+    }
+  }
+
+  Future<void> sendFilesToFirebase() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null && selectedPDFFile != null) {
+        String userId = user.uid;
+
+        await uploadFileToFirebase(selectedPDFFile!, userId, 'documents/${selectedPDFFile!.path.split('/').last}');
+
+        String downloadUrl = await firebase_storage.FirebaseStorage.instance
+            .ref('$userId/documents/${selectedPDFFile!.path.split('/').last}')
+            .getDownloadURL();
+
+        await FirebaseFirestore.instance
+            .collection('driver')
+            .doc(userId)
+            .update({'documentUrl': downloadUrl});
+
+        Get.showSnackbar(const CustomSnackbar(
+          "El archivo PDF se ha subido y guardado en Firestore.",
+          backgroundColors: Colors.lightGreen,
+          icons: Icons.offline_pin,
+        ));
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'No se pudo subir el archivo PDF: $e');
+    }
+  }
+
+  void selectPDFFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      selectedPDFFile = File(file.path ?? "Ningún archivo seleccionado");
+      pdfFilePath.value = selectedPDFFile!.path;
     }
   }
 
@@ -297,7 +366,7 @@ class RegisterInfoBasicController extends GetxController {
         );
 
         await sendImages();
-
+        await sendFilesToFirebase();
         Map<String, DateTime?> fechasExpedicion = {
           if (fechaA2 != null) 'A2': fechaA2,
           if (fechaB1 != null) 'B1': fechaB1,
@@ -318,7 +387,6 @@ class RegisterInfoBasicController extends GetxController {
       showProgressBar.value = false;
     }
   }
-
 
   Future<void> enviarDatosAFirebase(List<String> categories, Map<String, DateTime?> datesExpedition) async {
     try {
@@ -395,7 +463,6 @@ class RegisterInfoBasicController extends GetxController {
       textController.text = pickedDate.toLocal().toString().split(' ')[0];
     }
   }
-
 
   onNextStep(List<Step> steps) {
     if (activeStepIndex.value < (steps.length - 1)) {

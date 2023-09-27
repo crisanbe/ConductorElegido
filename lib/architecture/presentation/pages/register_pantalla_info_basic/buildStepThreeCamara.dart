@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:file_picker/file_picker.dart';
 
 class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
-  const BuildStepThreeCamara({super.key});
+  const BuildStepThreeCamara({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +32,11 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
               child: Image.asset(
                 'assets/images/mobile_photos.png',
                 fit: BoxFit.cover,
-                width: 150, // Cambia el ancho según tus preferencias
-                height: 150, // Cambia la altura según tus preferencias
+                width: 150,
+                height: 150,
               ),
             ),
-
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: EdgeInsets.only(left: 20),
@@ -47,8 +50,8 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                 ),
               ),
             ),
-            const SizedBox(height: 7),
-            const Align(
+            SizedBox(height: 7),
+            Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: EdgeInsets.only(left: 20),
@@ -62,12 +65,10 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
-            // Fila 1: Fotos por delante
+            SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Foto por delante de la licencia
                 GestureDetector(
                   onTap: () async {
                     await controller.takeIdFrontPhoto();
@@ -80,7 +81,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(15), // Bordes redondeados
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Stack(
                       alignment: Alignment.center,
@@ -93,7 +94,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                             fit: BoxFit.cover,
                           ),
                         if (controller.idFrontImageCedula != null)
-                          const Icon(
+                          Icon(
                             Icons.check_circle,
                             color: Colors.green,
                             size: 40,
@@ -102,16 +103,15 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (controller.idFrontImageCedula == null)
-                              const Icon(Icons.camera_alt, size: 50),
+                              Icon(Icons.camera_alt, size: 50),
                             if (controller.idFrontImageCedula == null)
-                              const Text('Cedula frontal')
+                              Text('Cedula frontal')
                           ],
                         ),
                       ],
                     ),
                   ),
                 ),
-                // Foto por delante de la tarjeta de identificación
                 GestureDetector(
                   onTap: () async {
                     await controller.takeIdBackPhoto();
@@ -124,7 +124,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(15), // Bordes redondeados
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Stack(
                       alignment: Alignment.center,
@@ -137,7 +137,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                             fit: BoxFit.cover,
                           ),
                         if (controller.idBackImageCedula != null)
-                          const Icon(
+                          Icon(
                             Icons.check_circle,
                             color: Colors.green,
                             size: 40,
@@ -146,9 +146,9 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (controller.idBackImageCedula == null)
-                              const Icon(Icons.camera_alt, size: 50),
+                              Icon(Icons.camera_alt, size: 50),
                             if (controller.idBackImageCedula == null)
-                              const Text('Cedula posterior')
+                              Text('Cedula posterior')
                           ],
                         ),
                       ],
@@ -157,12 +157,10 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                 ),
               ],
             ),
-            const SizedBox(height: 20), // Espaciado entre filas
-            // Fila 2: Fotos por detrás
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // Foto por detrás de la licencia
                 GestureDetector(
                   onTap: () async {
                     await controller.takeLicenseFrontPhoto();
@@ -175,7 +173,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(15), // Bordes redondeados
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Stack(
                       alignment: Alignment.center,
@@ -188,7 +186,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                             fit: BoxFit.cover,
                           ),
                         if (controller.licenseFrontImage != null)
-                          const Icon(
+                          Icon(
                             Icons.check_circle,
                             color: Colors.green,
                             size: 40,
@@ -197,9 +195,9 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (controller.licenseFrontImage == null)
-                              const Icon(Icons.camera_alt, size: 50),
+                              Icon(Icons.camera_alt, size: 50),
                             if (controller.licenseFrontImage == null)
-                              const CustomText(
+                              CustomText(
                                 text: "Licencia de conducion frontal",
                                 fontFamily: "bold",
                                 color: Colors.black,
@@ -211,7 +209,6 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                     ),
                   ),
                 ),
-                // Foto por detrás de la tarjeta de identificación
                 GestureDetector(
                   onTap: () async {
                     await controller.takeLicenseBackPhoto();
@@ -224,7 +221,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(15), // Bordes redondeados
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Stack(
                       alignment: Alignment.center,
@@ -237,7 +234,7 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                             fit: BoxFit.cover,
                           ),
                         if (controller.licenseBackImage != null)
-                          const Icon(
+                          Icon(
                             Icons.check_circle,
                             color: Colors.green,
                             size: 40,
@@ -246,9 +243,9 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (controller.licenseBackImage == null)
-                              const Icon(Icons.camera_alt, size: 50),
+                              Icon(Icons.camera_alt, size: 50),
                             if (controller.licenseBackImage == null)
-                              const CustomText(
+                              CustomText(
                                 text: "Licencia de conducion posterior",
                                 fontFamily: "bold",
                                 color: Colors.black,
@@ -262,7 +259,16 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
+
+            // Nuevo botón para subir PDF
+            ElevatedButton(
+              onPressed: () {
+                _.selectPDFFile(); // Llama a la función para seleccionar el archivo PDF
+              },
+              child: Text('Seleccionar PDF'),
+            )
+
           ],
         ),
       );
