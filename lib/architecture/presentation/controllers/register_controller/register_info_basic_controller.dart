@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
@@ -14,6 +15,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../../app/routes/app_pages.dart';
+import '../../../app/ui/utils/strings.dart';
 
 class RegisterInfoBasicController extends GetxController {
   final picker = ImagePicker();
@@ -36,7 +38,8 @@ class RegisterInfoBasicController extends GetxController {
   final TextEditingController contacto = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final RxInt userStatus = 0.obs;
+  final RxInt userStatus = RxInt(2);
+  final RxInt status = RxInt(0);
   final TextEditingController dateBirthController = TextEditingController();
   final TextEditingController fechaVigenciaA2 = TextEditingController();
   final TextEditingController fechaVigenciaB1 = TextEditingController();
@@ -68,6 +71,10 @@ class RegisterInfoBasicController extends GetxController {
   File? antecedentesProcuraduriaFile;
   File? antecedentesPoliciaFile;
 
+  int updateUserStatus([int? newStatus]) {
+    status.value = newStatus ?? 0;
+    return status.value;
+  }
 
   void onCategorySelected(bool value, String category) {
     switch (category) {
@@ -429,12 +436,12 @@ class RegisterInfoBasicController extends GetxController {
             address.text.trim(),
             dateOfRegistration.toIso8601String()
         );
-
         await enviarDatosAFirebase(categorias, fechasExpedicion);
         await sendImages();
         await sendFilesToFirebase();
-        Routes.HOME_VALIDATION;
+
         Get.offAllNamed("/validation");
+
       } on FirebaseAuthException catch (e) {
         final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
         //Get.back();

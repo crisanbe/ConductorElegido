@@ -16,11 +16,7 @@ class HomeController extends GetxController {
     super.onInit();
     authenticationRepository = AuthenticationRepositoryImpl();
     _auth = FirebaseAuth.instance;
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) {
-       refreshData();
-      }
-    });
+    refreshData();
   }
 
   Future<void> refreshData() async {

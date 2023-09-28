@@ -29,15 +29,15 @@ Future<void> main() async {
   ));
 }
 
-Future<String> _getInitialRoute(LoginController registerController) async {
+Future<String> _getInitialRoute(LoginController loginController) async {
   final auth = FirebaseAuth.instance;
   final currentUser = auth.currentUser;
 
   if (currentUser == null) {
-    // El usuario no está autenticado, lo redirigimos a la pantalla de inicio de sesión.
+    loginController.updateUserStatus();
     return Routes.LOGIN;
   } else {
-    final userData = await registerController.authenticationRepository.getUserData(currentUser.uid);
+    final userData = await loginController.authenticationRepository.getUserData(currentUser.uid);
 
     if (userData != null) {
       final status = userData['status'];

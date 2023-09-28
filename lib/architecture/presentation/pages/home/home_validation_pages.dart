@@ -1,4 +1,3 @@
-import 'package:conductor_elegido/architecture/presentation/controllers/home_validation_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

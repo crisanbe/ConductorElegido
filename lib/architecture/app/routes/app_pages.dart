@@ -7,8 +7,6 @@ import 'package:conductor_elegido/architecture/presentation/pages/register/regis
 import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/register_info_basic_page.dart';
 import 'package:get/get.dart';
 
-import '../bindings/home_validation_binding.dart';
-
 part 'app_routes.dart';
 
 abstract class AppPages {

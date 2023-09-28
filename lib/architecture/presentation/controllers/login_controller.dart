@@ -18,7 +18,7 @@ class LoginController extends GetxController {
   final TextEditingController passwordController = TextEditingController();
   late final AuthenticationRepositoryImpl authenticationRepository;
   late final FirebaseAuth auth;
-  final RxInt status = 0.obs;
+  final RxInt status = RxInt(0);
   RxBool isObscure = true.obs;
   late final RxBool _showProgress;
   bool get showProgress => _showProgress.value;
@@ -45,9 +45,9 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  int updateUserStatus(int newStatus) {
-    status.value = newStatus;
-    return newStatus;
+  int updateUserStatus([int? newStatus]) {
+    status.value = newStatus ?? 0;
+    return status.value;
   }
 
   void togglePasswordVisibility() {
