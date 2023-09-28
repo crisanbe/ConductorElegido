@@ -1,7 +1,6 @@
 import 'package:conductor_elegido/architecture/presentation/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../widgets/atomos/customText.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -13,8 +12,7 @@ class HomePage extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-      builder: (_) {
+    return GetBuilder<HomeController>(builder: (_) {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(

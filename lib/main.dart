@@ -47,7 +47,6 @@ Future<String> _getInitialRoute(LoginController registerController) async {
         return Routes.HOME_VALIDATION;
       }
     }
-
     // Si no hay datos de usuario o el estado no coincide con ninguno de los casos anteriores,
     // redirigir a una pantalla de inicio por defecto.
     return Routes.LOGIN;

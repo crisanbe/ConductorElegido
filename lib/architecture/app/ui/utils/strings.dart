@@ -10,5 +10,5 @@ class AppStrings {
   static const emailAddress = "Correo electrónico";
 
   static const activeDriverStatus = 1;
-  static const driverStatusInRegistrationProgress = 0;
+  static const driverStatusInRegistrationProgress = 2;
 }

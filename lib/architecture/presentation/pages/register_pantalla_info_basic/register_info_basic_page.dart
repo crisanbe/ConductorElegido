@@ -142,8 +142,13 @@ class RegisterInfoBasicPage extends GetView<RegisterInfoBasicController> {
                     },
                   ),
                 ),
-                if (controller.showProgressBar.value)
-                const LoadingPage(message: "Enviando información...")
+                Obx(() {
+                  if (controller.showProgressBar.value) {
+                    return const LoadingPage(message: "Cargando...");
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                }),
               ],
             );
           }),

@@ -1,8 +1,9 @@
-import 'package:conductor_elegido/architecture/presentation/controllers/home_controller.dart';
-import 'package:conductor_elegido/architecture/presentation/pages/register/register_page.dart';
+import 'package:conductor_elegido/architecture/presentation/controllers/home_validation_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../controllers/home_controller.dart';
 
 class HomeValidationPage extends GetView<HomeController> {
   const HomeValidationPage({Key? key}) : super(key: key);
@@ -115,7 +116,13 @@ class HomeValidationPage extends GetView<HomeController> {
           backgroundColor: Colors.white,
           onPressed: () {
             _.signOut();
-            Get.offAll(() => const LoginPage()); // Cambio aquí
+            Obx(() {
+              if (_.isSigningOut.value) {
+                return const CircularProgressIndicator();
+              } else {
+                return const Text("Cerrar Sesión");
+              }
+            });
           },
           child: const Icon(Icons.logout, color: Colors.black,),
         ),

@@ -46,8 +46,7 @@ class RegisterInfoBasicController extends GetxController {
 
   late final AuthenticationRepositoryImpl userRepository;
   late final FirebaseAuth auth;
-  final RxBool showProgressBar = false.obs;
-
+  final RxBool showProgressBar = RxBool(false);
   List<String> options = ['CC', 'Documento 2'];
   RxString currentItemSelected = "CC".obs;
 
@@ -89,10 +88,12 @@ class RegisterInfoBasicController extends GetxController {
   }
 
   void togglePasswordVisibility() {
+    showProgressBar.value = true;
     isObscure.value = !isObscure.value;
   }
 
   Future<void> takeIdFrontPhoto() async {
+    showProgressBar.value = true;
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
@@ -101,9 +102,11 @@ class RegisterInfoBasicController extends GetxController {
     }
 
     areAllImagesUploaded = checkIfAllImagesUploaded();
+    showProgressBar.value = false;
   }
 
   Future<void> takeIdBackPhoto() async {
+    showProgressBar.value = true;
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
@@ -112,9 +115,11 @@ class RegisterInfoBasicController extends GetxController {
     }
 
     areAllImagesUploaded = checkIfAllImagesUploaded();
+    showProgressBar.value = false;
   }
 
   Future<void> takeLicenseFrontPhoto() async {
+    showProgressBar.value = true;
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
@@ -123,9 +128,11 @@ class RegisterInfoBasicController extends GetxController {
     }
 
     areAllImagesUploaded = checkIfAllImagesUploaded();
+    showProgressBar.value = false;
   }
 
   Future<void> takeLicenseBackPhoto() async {
+    showProgressBar.value = true;
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
@@ -134,6 +141,7 @@ class RegisterInfoBasicController extends GetxController {
     }
 
     areAllImagesUploaded = checkIfAllImagesUploaded();
+    showProgressBar.value = false;
   }
 
   bool isUserAdult(DateTime dateOfBirth) {
@@ -144,6 +152,7 @@ class RegisterInfoBasicController extends GetxController {
   }
 
   Future<void> sendImages() async {
+    showProgressBar.value = true; // Mostrar indicador de carga antes de enviar imágenes
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -193,10 +202,13 @@ class RegisterInfoBasicController extends GetxController {
               .doc(userId)
               .update({'licenseBackImageUrl': downloadUrl});
         }
+        // Indicar que todas las imágenes se han subido correctamente
+        areAllImagesUploaded = true;
         Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
       }
-    } catch (e) { Get.showSnackbar(const CustomSnackbar("Las imágenes se han subido y guardado en Firestore.", backgroundColors: Colors.lightGreen,icons: Icons.offline_pin,));
-    Get.snackbar('Error', 'No se pudo subir las imágenes: $e');
+    } catch (e) {Get.snackbar('Error', 'No se pudo subir las imágenes: $e');}
+    finally {
+      showProgressBar.value = false; // Ocultar indicador de carga cuando se haya completado el envío de imágenes
     }
   }
 
@@ -231,6 +243,7 @@ class RegisterInfoBasicController extends GetxController {
   }
 
   Future<void> sendFilesToFirebase() async {
+    showProgressBar.value = true;
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -280,6 +293,8 @@ class RegisterInfoBasicController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'No se pudieron subir los documentos: $e');
+    }finally {
+      showProgressBar.value = false; // Ocultar indicador de carga cuando se haya completado el envío de imágenes
     }
   }
 
@@ -317,8 +332,7 @@ class RegisterInfoBasicController extends GetxController {
     userRepository = AuthenticationRepositoryImpl();
     auth = FirebaseAuth.instance;
     showProgressBar.value;
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    });
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {});
   }
 
   onDocumentChanged(String newValue) {
@@ -362,6 +376,12 @@ class RegisterInfoBasicController extends GetxController {
         DateTime? fechaB1 = fechaVigenciaB1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaB1.text.trim()) : null;
         DateTime? fechaC1 = fechaVigenciaC1.text.trim().isNotEmpty ? DateTime.parse(fechaVigenciaC1.text.trim()) : null;
 
+        Map<String, DateTime?> fechasExpedicion = {
+          if (fechaA2 != null) 'A2': fechaA2,
+          if (fechaB1 != null) 'B1': fechaB1,
+          if (fechaC1 != null) 'C1': fechaC1,
+        };
+
         // Validar la vigencia de las categorías
         if (fechaA2 != null && fechaA2.isBefore(DateTime.now())) {
           Get.showSnackbar(const CustomSnackbar("La categoría A2 está vencida. No se puede registrar."));
@@ -394,6 +414,7 @@ class RegisterInfoBasicController extends GetxController {
           return;
         }
 
+        showProgressBar.value = true;
         await signUpUseCase.execute(
             currentItemSelected.value.trim(),
             document.text.trim(),
@@ -409,17 +430,11 @@ class RegisterInfoBasicController extends GetxController {
             dateOfRegistration.toIso8601String()
         );
 
+        await enviarDatosAFirebase(categorias, fechasExpedicion);
         await sendImages();
         await sendFilesToFirebase();
-        Map<String, DateTime?> fechasExpedicion = {
-          if (fechaA2 != null) 'A2': fechaA2,
-          if (fechaB1 != null) 'B1': fechaB1,
-          if (fechaC1 != null) 'C1': fechaC1,
-        };
-
-        await enviarDatosAFirebase(categorias, fechasExpedicion);
-
-        Get.offNamed(Routes.HOME_VALIDATION);
+        Routes.HOME_VALIDATION;
+        Get.offAllNamed("/validation");
       } on FirebaseAuthException catch (e) {
         final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
         //Get.back();
@@ -433,6 +448,7 @@ class RegisterInfoBasicController extends GetxController {
   }
 
   Future<void> enviarDatosAFirebase(List<String> categories, Map<String, DateTime?> datesExpedition) async {
+    showProgressBar.value = true;
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -458,6 +474,8 @@ class RegisterInfoBasicController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'No se pudo enviar la información a Firebase: $e');
+    }finally {
+      showProgressBar.value = false;
     }
   }
 
