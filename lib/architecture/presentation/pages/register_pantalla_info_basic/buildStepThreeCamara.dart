@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:file_picker/file_picker.dart';
 
 class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
   const BuildStepThreeCamara({Key? key}) : super(key: key);

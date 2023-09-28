@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
@@ -13,9 +14,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
-import '../../../app/routes/app_pages.dart';
-import '../../../app/ui/utils/strings.dart';
 
 class RegisterInfoBasicController extends GetxController {
   final picker = ImagePicker();
@@ -39,7 +37,6 @@ class RegisterInfoBasicController extends GetxController {
   final TextEditingController email = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final RxInt userStatus = RxInt(2);
-  final RxInt status = RxInt(0);
   final TextEditingController dateBirthController = TextEditingController();
   final TextEditingController fechaVigenciaA2 = TextEditingController();
   final TextEditingController fechaVigenciaB1 = TextEditingController();
@@ -70,11 +67,6 @@ class RegisterInfoBasicController extends GetxController {
   File? antecedentesJudicialesFile;
   File? antecedentesProcuraduriaFile;
   File? antecedentesPoliciaFile;
-
-  int updateUserStatus([int? newStatus]) {
-    status.value = newStatus ?? 0;
-    return status.value;
-  }
 
   void onCategorySelected(bool value, String category) {
     switch (category) {
@@ -256,40 +248,45 @@ class RegisterInfoBasicController extends GetxController {
       if (user != null) {
         String userId = user.uid;
 
+        // Crear una función para obtener el nombre del archivo a partir del path
+        String getFileNameFromPath(File file) {
+          return path.basename(file.path);
+        }
+
         // Enviar el primer documento si está seleccionado
         if (selectedDocument1 != null) {
-          await uploadFileToFirebase(selectedDocument1!, userId, 'documents/documento1.pdf');
+          await uploadFileToFirebase(selectedDocument1!, userId, 'documents/${getFileNameFromPath(selectedDocument1!)}');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
-              .ref('$userId/documents/documento1.pdf')
+              .ref('$userId/documents/${getFileNameFromPath(selectedDocument1!)}')
               .getDownloadURL();
           await FirebaseFirestore.instance
               .collection('driver')
               .doc(userId)
-              .update({'documento1Url': downloadUrl});
+              .update({'antesedentes1Url': downloadUrl});
         }
 
         // Enviar el segundo documento si está seleccionado
         if (selectedDocument2 != null) {
-          await uploadFileToFirebase(selectedDocument2!, userId, 'documents/documento2.pdf');
+          await uploadFileToFirebase(selectedDocument2!, userId, 'documents/${getFileNameFromPath(selectedDocument2!)}');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
-              .ref('$userId/documents/documento2.pdf')
+              .ref('$userId/documents/${getFileNameFromPath(selectedDocument2!)}')
               .getDownloadURL();
           await FirebaseFirestore.instance
               .collection('driver')
               .doc(userId)
-              .update({'documento2Url': downloadUrl});
+              .update({'antesedentes2Url': downloadUrl});
         }
 
         // Enviar el tercer documento si está seleccionado
         if (selectedDocument3 != null) {
-          await uploadFileToFirebase(selectedDocument3!, userId, 'documents/documento3.pdf');
+          await uploadFileToFirebase(selectedDocument3!, userId, 'documents/${getFileNameFromPath(selectedDocument3!)}');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
-              .ref('$userId/documents/documento3.pdf')
+              .ref('$userId/documents/${getFileNameFromPath(selectedDocument3!)}')
               .getDownloadURL();
           await FirebaseFirestore.instance
               .collection('driver')
               .doc(userId)
-              .update({'documento3Url': downloadUrl});
+              .update({'antesedentes3Url': downloadUrl});
         }
 
         Get.showSnackbar(const CustomSnackbar(
@@ -300,10 +297,11 @@ class RegisterInfoBasicController extends GetxController {
       }
     } catch (e) {
       Get.snackbar('Error', 'No se pudieron subir los documentos: $e');
-    }finally {
-      showProgressBar.value = false; // Ocultar indicador de carga cuando se haya completado el envío de imágenes
+    } finally {
+      showProgressBar.value = false;
     }
   }
+
 
   void selectDocument(int documentNumber) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
