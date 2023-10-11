@@ -64,10 +64,6 @@ class RegisterInfoBasicController extends GetxController {
   bool showExpirationDateB1 = false;
   bool showExpirationDateC1 = false;
 
-  File? antecedentesJudicialesFile;
-  File? antecedentesProcuraduriaFile;
-  File? antecedentesPoliciaFile;
-
   void onCategorySelected(bool value, String category) {
     switch (category) {
       case 'A2':
@@ -248,12 +244,11 @@ class RegisterInfoBasicController extends GetxController {
       if (user != null) {
         String userId = user.uid;
 
-        // Crear una función para obtener el nombre del archivo a partir del path
+        //obtener el nombre del archivo a partir del path
         String getFileNameFromPath(File file) {
           return path.basename(file.path);
         }
 
-        // Enviar el primer documento si está seleccionado
         if (selectedDocument1 != null) {
           await uploadFileToFirebase(selectedDocument1!, userId, 'documents/${getFileNameFromPath(selectedDocument1!)}');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
@@ -265,7 +260,6 @@ class RegisterInfoBasicController extends GetxController {
               .update({'antesedentes1Url': downloadUrl});
         }
 
-        // Enviar el segundo documento si está seleccionado
         if (selectedDocument2 != null) {
           await uploadFileToFirebase(selectedDocument2!, userId, 'documents/${getFileNameFromPath(selectedDocument2!)}');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
@@ -277,7 +271,6 @@ class RegisterInfoBasicController extends GetxController {
               .update({'antesedentes2Url': downloadUrl});
         }
 
-        // Enviar el tercer documento si está seleccionado
         if (selectedDocument3 != null) {
           await uploadFileToFirebase(selectedDocument3!, userId, 'documents/${getFileNameFromPath(selectedDocument3!)}');
           String downloadUrl = await firebase_storage.FirebaseStorage.instance
@@ -301,7 +294,6 @@ class RegisterInfoBasicController extends GetxController {
       showProgressBar.value = false;
     }
   }
-
 
   void selectDocument(int documentNumber) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -327,9 +319,10 @@ class RegisterInfoBasicController extends GetxController {
         // Manejar un número de documento inválido si es necesario
           break;
       }
+
+      update(); // Agrega esto para notificar a GetBuilder que el estado ha cambiado
     }
   }
-
 
   @override
   void onInit() {

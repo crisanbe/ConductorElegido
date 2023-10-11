@@ -1,37 +1,75 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class UploadPDFWidget extends StatelessWidget {
-    final Function(File, String) onUpload;
+class DocumentSelectionButton extends StatefulWidget {
+    final String buttonText;
+    final VoidCallback onPressed;
+    final bool isSelected;
+    final String? selectedFileName;
 
-    UploadPDFWidget({required this.onUpload});
+    const DocumentSelectionButton({
+        required this.buttonText,
+        required this.onPressed,
+        required this.isSelected,
+        this.selectedFileName,
+    });
 
     @override
+    _DocumentSelectionButtonState createState() => _DocumentSelectionButtonState();
+}
+
+class _DocumentSelectionButtonState extends State<DocumentSelectionButton> {
+    @override
     Widget build(BuildContext context) {
-        return Column(
-            children: [
-            ElevatedButton(
-                onPressed: () async {
-                // Abre un diálogo para seleccionar un archivo PDF
-                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['pdf'],
-                );
-
-                if (result != null) {
-                    File pdfFile = File(result.files.single.path!);
-
-                    // Puedes cambiar 'nombre_del_archivo' por el nombre que desees
-                    String fileName = 'nombre_del_archivo';
-
-                    onUpload(pdfFile, fileName);
-                }
-            },
-            child: Text('Subir PDF'),
-        ),
-        ],
+        return Center(
+            child: Container(
+                width: 250, // Ajusta el ancho según tus necesidades
+                child: ElevatedButton(
+                    onPressed: widget.onPressed,
+                    style: ElevatedButton.styleFrom(
+                        primary: widget.isSelected ? Colors.blue : Colors.grey,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 2,
+                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    ),
+                    child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                            Icon(Icons.insert_drive_file, color: Colors.white),
+                            SizedBox(width: 8),
+                            AnimatedSwitcher(
+                                duration: Duration(milliseconds: 300),
+                                child: Container(
+                                    key: UniqueKey(),
+                                    constraints: BoxConstraints(maxWidth: 120), // Ajusta el ancho máximo del texto según tus necesidades
+                                    child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                            widget.selectedFileName != null && widget.selectedFileName!.isNotEmpty
+                                                ? widget.selectedFileName!
+                                                : widget.buttonText,
+                                            style: TextStyle(fontSize: 16),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ],
+                    ),
+                ),
+            ),
         );
     }
 }
+
+
+
+///SizedBox(height: widget.isSelected ? 0 : 4), // Ajuste para evitar la separación vertical cuando está seleccionado
+/*  if (widget.isSelected &&
+                    widget.selectedFileName != null &&
+                    widget.selectedFileName!.isNotEmpty)*/
+//const Text("")
+/* Text(
+                        'Archivo seleccionado: ${widget.selectedFileName}',
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                    ),*/

@@ -1,6 +1,8 @@
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
+import 'package:conductor_elegido/architecture/presentation/pages/register_pantalla_info_basic/subirpdf_page.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/atomos/customText.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 import 'package:get/get.dart';
 
 class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
@@ -257,25 +259,29 @@ class BuildStepThreeCamara extends GetView<RegisterInfoBasicController> {
             ),
             SizedBox(height: 20),
 
-            ElevatedButton(
+            DocumentSelectionButton(
+              buttonText: 'Policia',
+              isSelected: _.selectedDocument1 != null,
+              selectedFileName: _.selectedDocument1 != null ? path.basename(_.selectedDocument1!.path) : '',
               onPressed: () {
-                _.selectDocument(1); // Llama a la función para seleccionar el primer documento
+                _.selectDocument(1);
               },
-              child: Text('Seleccionar Documento 1'),
             ),
-
-            ElevatedButton(
+            DocumentSelectionButton(
+              buttonText: 'Procuraduria',
+              isSelected: _.selectedDocument2 != null,
+              selectedFileName: _.selectedDocument2 != null ? path.basename(_.selectedDocument2!.path) : '',
               onPressed: () {
-                _.selectDocument(2); // Llama a la función para seleccionar el segundo documento
+                _.selectDocument(2);
               },
-              child: Text('Seleccionar Documento 2'),
             ),
-
-            ElevatedButton(
+            DocumentSelectionButton(
+              buttonText: 'Contraloria',
+              isSelected: _.selectedDocument3 != null,
+              selectedFileName: _.selectedDocument3 != null ? path.basename(_.selectedDocument3!.path) : '',
               onPressed: () {
-                _.selectDocument(3); // Llama a la función para seleccionar el segundo documento
+                _.selectDocument(3);
               },
-              child: Text('Seleccionar Documento 2'),
             ),
           ],
         ),

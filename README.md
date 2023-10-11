@@ -1,21 +1,26 @@
-<<<<<<< HEAD
-# conductor
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
 # ConductorElegido
 App conductor
->>>>>>> ead11653b639fcf2d222d282a45b690aee9c8309
+# Qué es este proyecto?
+Proyecto
+[https://github.com/crisanbe/ConductorElegido](https://github.com/crisanbe/ConductorElegido).
+
+![](https://i.imgur.com/NUwWxYnl.png)![](https://i.imgur.com/SoT8WZJl.png)![](https://i.imgur.com/IkuUmwTl.png)![](https://i.imgur.com/cCEd6m9l.png)![](https://i.imgur.com/DXlkmGCl.png)![](https://i.imgur.com/CZwAyVil.png)
+
+# Características principales
+1. Dart
+2. MVVM
+3. sdk: flutter
+4. Patron Getx
+5. firebase
+6. firebase_auth
+7. firebase_core
+8. cloud_firestore
+9. flutter_keyboard_visibility
+10. cupertino_icons
+11. flutter_native_splash
+12. location
+13. timezone
+14. file_picker
+15. path_provider
+16. firebase_storage
+
