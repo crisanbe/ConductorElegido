@@ -1,16 +1,22 @@
-abstract class UserRepository {
+
+abstract class AuthenticationRepository {
   Future<void> signUpUser(
       String typeDocument,
       String document,
       String fullName,
-      String contacto,
+      String contact,
       String email,
       String password,
-      String status,
+      int status,
       DateTime dateBirth,
-      DateTime dateExpirationLicense,
-      DateTime licensCurrentlyExpired,
-      String ZoneCoverage,
-      String Address
+      String zoneCoverage,
+      String eps,
+      String address,
+      String createat
+      );
+
+  Future<void> login(
+      String email,
+      String password
       );
 }

@@ -1,7 +1,7 @@
+import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
 import 'package:conductor_elegido/architecture/presentation/controllers/register_controller/register_info_basic_controller.dart';
-import 'package:conductor_elegido/architecture/presentation/widgets/ReusableDropdownFormField.dart';
-import 'package:conductor_elegido/architecture/presentation/widgets/customtextformfield.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/moleculas/reusableDropdownFormField.dart';
+import 'package:conductor_elegido/architecture/presentation/widgets/moleculas/customtextformfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,12 +22,23 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
           child: Column(
             children: [
               Container(
-                width: 190,
-                height: 190,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/register.png'),
-                  ),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(15.0), // Bordes redondeados
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2), // Sombra sutil
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  'assets/images/register.png',
+                  fit: BoxFit.cover,
+                  width: 170,
+                  height: 170,
                 ),
               ),
               const Align(
@@ -67,7 +78,7 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
                   options: controller.options,
                   value: controller.currentItemSelected.value,
                   onChanged: (String? newValueSelected) {
-                    controller.onRoleChanged(newValueSelected!);
+                    controller.onDocumentChanged(newValueSelected!);
                   },
                   labelColor: Colors.white,
                   enabledBorderColor: Colors.white,
@@ -85,10 +96,10 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
                   validator: (value) {
                     RegExp regex = RegExp(r'^.{6,}$');
                     if (value!.isEmpty) {
-                      return "La clave no puede estar vacía";
+                      return "Este campo es requerido";
                     }
                     if (!regex.hasMatch(value)) {
-                      return ("introduzca una contraseña válida de 6 caracteres como mínimo");
+                      return ("introduzca una cedula válida de 6 caracteres como mínimo");
                     } else {
                       return null;
                     }
@@ -105,11 +116,6 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
                   if (value!.isEmpty) {
                     return "Este campo es requerido";
                   }
-                  RegExp regex = RegExp(r'^.{6,}$');
-                  if (!regex.hasMatch(value)) {
-                    return "Introduzca al menos 6 caracteres";
-                  }
-                  return null;
                 },
                 keyboardType: TextInputType.text,
                 onChanged: (value) {},
@@ -122,14 +128,8 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
                   hintText: 'Contacto',
                   prefixIcon: Icons.contact_mail,
                   validator: (value) {
-                    RegExp regex = RegExp(r'^.{6,}$');
                     if (value!.isEmpty) {
                       return "Este campo es requerido";
-                    }
-                    if (!regex.hasMatch(value)) {
-                      return ("Introduzca al menos 1 contacto");
-                    } else {
-                      return null;
                     }
                   },
                   keyboardType: TextInputType.number,
@@ -140,38 +140,26 @@ class BuildStepOneContent extends GetView<RegisterInfoBasicController> {
                   controller: _.email,
                   hintText: 'Correo eletronico',
                   prefixIcon: Icons.email,
-                  validator: (value) {
-                    RegExp regex = RegExp(r'^.{6,}$');
-                    if (value!.isEmpty) {
-                      return "Este campo es requerido";
-                    }
-                    if (!regex.hasMatch(value)) {
-                      return ("introduzca un correo valido");
-                    } else {
-                      return null;
-                    }
-                  },
+                  validator: validateEmail,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {}),
               const SizedBox(height: 17),
-              customTextFormField(
+              Obx(() {
+                return customTextFormField(
                   focusNode: passwordFocus,
                   controller: _.passwordController,
                   hintText: 'clave',
                   prefixIcon: Icons.email,
-                  validator: (value) {
-                    RegExp regex = RegExp(r'^.{6,}$');
-                    if (value!.isEmpty) {
-                      return "La clave no puede estar vacía";
-                    }
-                    if (!regex.hasMatch(value)) {
-                      return ("introduzca una contraseña válida de 6 caracteres como mínimo");
-                    } else {
-                      return null;
-                    }
-                  },
+                  validator: validatePassword,
                   keyboardType: TextInputType.text,
-                  onChanged: (value) {}),
+                  onChanged: (value) {},
+                  obscureText: _.isObscure.value,
+                  togglePasswordVisibility:()=> _.togglePasswordVisibility(),
+                  suffixIcon: _.isObscure.value
+                      ? Icons.visibility_off
+                      : Icons.visibility,
+                );
+              }),
               const SizedBox(height: 17),
             ],
           ),

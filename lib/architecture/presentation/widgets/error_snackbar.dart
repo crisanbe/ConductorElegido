@@ -2,20 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// Show a red snackbar with the error information.
-class ErrorSnackbar extends GetSnackBar {
-  const ErrorSnackbar(final String message) : super(message: message);
+class CustomSnackbar extends GetSnackBar {
+  final String message;
+  final Color? backgroundColors;
+  final Color? textColor;
+  final IconData? icons;
+
+  const CustomSnackbar(
+      this.message, {
+        this.backgroundColors,
+        this.textColor,
+        this.icons,
+        Key? key,
+      }) : super(key: key);
 
   @override
-  Color get backgroundColor => Colors.redAccent;
+  Color get backgroundColor => backgroundColors ?? Colors.redAccent;
 
   @override
-  Widget? get icon => const Icon(Icons.error_outline, color: Colors.white);
+  Widget? get icon => icons != null ? Icon(icons, color: Colors.white) : null;
 
   @override
   Widget? get mainButton {
     return IconButton(
       onPressed: () => Get.back(),
-      icon: const Icon(Icons.close_outlined),
+      icon: const Icon(Icons.close_outlined, color: Colors.white),
     );
   }
 
@@ -25,10 +36,15 @@ class ErrorSnackbar extends GetSnackBar {
 
   @override
   Widget? get messageText {
-    return SelectableText(
-      message!,
-      style: const TextStyle(
-        color: Colors.white,
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 300),
+      child: SelectableText(
+        message,
+        style: TextStyle(
+          color: textColor ?? Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
       ),
     );
   }

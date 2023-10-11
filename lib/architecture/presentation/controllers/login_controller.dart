@@ -1,29 +1,34 @@
+import 'dart:async';
+import 'dart:ffi';
+
 import 'package:conductor_elegido/architecture/app/routes/app_pages.dart';
 import 'package:conductor_elegido/architecture/app/ui/utils/strings.dart';
-import 'package:conductor_elegido/architecture/domain/repositories/user_repository_impl.dart';
+import 'package:conductor_elegido/architecture/app/ui/utils/utils.dart';
+import 'package:conductor_elegido/architecture/domain/repositories/authentication_repository_impl.dart';
+import 'package:conductor_elegido/architecture/domain/use_cases/login_usecase.dart';
 import 'package:conductor_elegido/architecture/presentation/widgets/error_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class RegisterController extends GetxController {
+class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  late final UserRepositoryImpl userRepository;
+  late final AuthenticationRepositoryImpl authenticationRepository;
   late final FirebaseAuth auth;
-  final RxString userStatus = "En proceso".obs;
-  String get userStatusValue => userStatus.value;
-  final RxString status = "".obs;
+  final RxInt status = RxInt(0);
   RxBool isObscure = true.obs;
   late final RxBool _showProgress;
   bool get showProgress => _showProgress.value;
+  final StreamController<Map<String, dynamic>> _userDataStreamController = StreamController.broadcast();
+  Stream<Map<String, dynamic>> get userDataStream => _userDataStreamController.stream;
 
   @override
   void onInit() {
     super.onInit();
-    userRepository = UserRepositoryImpl();
+    authenticationRepository = AuthenticationRepositoryImpl();
     auth = FirebaseAuth.instance;
     _showProgress = false.obs;
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -40,9 +45,9 @@ class RegisterController extends GetxController {
     super.onClose();
   }
 
-  String updateUserStatus(String newStatus) {
-    status.value = newStatus;
-    return newStatus;
+  int updateUserStatus([int? newStatus]) {
+    status.value = newStatus ?? 0;
+    return status.value;
   }
 
   void togglePasswordVisibility() {
@@ -53,43 +58,49 @@ class RegisterController extends GetxController {
     if (formKey.currentState!.validate()) {
       _showProgressDialog();
       try {
-        await auth.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text,
+        await LoginUseCase(authenticationRepository).login(
+          emailController.text.trim(),
+          passwordController.text,
         );
         await checkRegistrationStatus();// verificar y actualizar el estado después de iniciar sesión
         Get.back();
         _navigateBasedOnStatus();
-      } on FirebaseAuthException catch (e) {
+      }on FirebaseAuthException catch (e) {
+        final customErrorMessage = firebaseAuthErrorTranslations[e.code] ?? "Error desconocido";
         Get.back();
-        Get.showSnackbar(ErrorSnackbar(e.message ?? e.code));
+        Get.showSnackbar(CustomSnackbar(customErrorMessage,icons: Icons.error_outline));
       }
     }
   }
 
   void _showProgressDialog() {
     Get.dialog(
-      const Center(child: CircularProgressIndicator()),
+      const Center(child: CircularProgressIndicator(color: Colors.blueAccent,)),
       barrierDismissible: false,
     );
   }
 
   void _navigateBasedOnStatus() {
-    if (status.value == AppStrings.activeStatus) {
+    if (status.value == AppStrings.activeDriverStatus) {
       Get.offNamed(Routes.HOME);
-    } else if (status.value == AppStrings.inProgressStatus) {
-      Get.offNamed(Routes.REGISTER);
+    } else if (status.value == AppStrings.driverStatusInRegistrationProgress) {
+      Get.offNamed(Routes.HOME_VALIDATION);
     }
   }
 
   checkRegistrationStatus() async {
     final currentUser = auth.currentUser;
     if (currentUser != null) {
-      Map<String, dynamic>? userData = await userRepository.getUserData(currentUser.uid);
+      Map<String, dynamic>? userData = await authenticationRepository.getUserData(currentUser.uid);
       if (userData != null) {
         updateUserStatus(userData['status']);
-        update();
+
+        // Emitir los datos actualizados a través del Stream
+        _userDataStreamController.add(userData);
+
+        update(); // Actualizar la UI si es necesario
       }
     }
   }
+
 }

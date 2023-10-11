@@ -26,7 +26,7 @@ class SplashPage extends GetView<SplashController> {
               height: Get.width * 0.6, // Set desired height
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/logo_conductor.png'),
+                  image: AssetImage('assets/images/splash.png'),
                 ),
               ),
             ),

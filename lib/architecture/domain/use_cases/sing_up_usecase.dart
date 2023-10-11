@@ -1,9 +1,9 @@
 import 'package:conductor_elegido/architecture/data/firebase/auth_firebase.dart';
 
 class SignUpUseCase {
-  final UserRepository userRepository;
+  final AuthenticationRepository authenticationRepository;
 
-  SignUpUseCase(this.userRepository);
+  SignUpUseCase(this.authenticationRepository);
 
   Future<void> execute(
       String typeDocument,
@@ -12,13 +12,14 @@ class SignUpUseCase {
       String contacto,
       String email,
       String password,
-      String status,
+      int status,
       DateTime dateBirth,
-      DateTime dateExpirationLicense,
-      DateTime licensCurrentlyExpired,
-      String ZoneCoverage,
-      String Address) async {
-    await userRepository.signUpUser(
+      String zoneCoverage,
+      String eps,
+      String address,
+      String dateOfRegistration
+      ) async {
+    await authenticationRepository.signUpUser(
         typeDocument,
         document,
         fullName,
@@ -27,9 +28,10 @@ class SignUpUseCase {
         password,
         status,
         dateBirth,
-        dateExpirationLicense,
-        licensCurrentlyExpired,
-        ZoneCoverage,
-        Address);
+        zoneCoverage,
+        eps,
+        address,
+        dateOfRegistration
+    );
   }
 }
